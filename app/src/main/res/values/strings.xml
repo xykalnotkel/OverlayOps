@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OverlayOps</string>
+    <string name="app_name">AppsPerms</string>
     <string name="app_subtitle">Built in XyVerse · via Shizuku</string>
 
     <!-- tab & pencarian -->
@@ -8,6 +8,9 @@
     <string name="tab_overlay_count">Overlay · %1$d</string>
     <string name="tab_apps_count">Semua app · %1$d</string>
     <string name="search_hint">Cari nama app atau nama paket…</string>
+    <string name="cd_search">Kolom pencarian aplikasi</string>
+    <string name="cd_menu">Buka menu</string>
+    <string name="cd_status_chip">Status koneksi Shizuku, ketuk untuk detail</string>
 
     <!-- filter -->
     <string name="type_all">Semua</string>
@@ -19,6 +22,10 @@
     <string name="filter_default">Default</string>
     <string name="sort_name">Nama</string>
     <string name="sort_status">Status</string>
+
+    <!-- header daftar -->
+    <string name="header_user_apps">App terinstall</string>
+    <string name="header_system_apps">App sistem</string>
 
     <!-- status op -->
     <string name="status_allowed">Diizinkan</string>
@@ -45,8 +52,8 @@
 
     <string name="setup_title">Sambungkan ke Shizuku</string>
     <string name="setup_off">Shizuku belum berjalan. Mulai Shizuku lewat root, atau pairing ADB wireless debugging, lalu tekan Minta izin.</string>
-    <string name="setup_permission">Shizuku sudah jalan, tinggal kasih izin ke OverlayOps. Kalau dialog tidak muncul, buka app Shizuku → Authorized applications → aktifkan OverlayOps.</string>
-    <string name="setup_bridge_failed">Izin sudah ada, tapi akses ke AppOps gagal:\n%1$s\n\nCek Laporan perangkat lewat menu ⫶ untuk detail.</string>
+    <string name="setup_permission">Shizuku sudah jalan, tinggal kasih izin ke AppsPerms. Kalau dialog tidak muncul, buka app Shizuku → Authorized applications → aktifkan AppsPerms.</string>
+    <string name="setup_bridge_failed">Izin sudah ada, tapi akses ke AppOps gagal:\n%1$s\n\nCek Laporan perangkat lewat menu untuk detail.</string>
     <string name="request_permission">Minta izin</string>
     <string name="recheck_permission">Periksa ulang</string>
     <string name="open_shizuku">Buka Shizuku</string>
@@ -55,21 +62,72 @@
     <!-- sheet ubah mode -->
     <string name="sheet_current">Status sekarang: <b>%1$s</b> (%2$s)</string>
     <string name="warn_overlay_break">⚠ App ini meminta izin overlay di manifest-nya. Memblokir bisa bikin bubble, floating button, atau fitur tertentu gagal — sebagian app bahkan ikut crash. Pilih <b>Diabaikan (ignore)</b> kalau ingin lebih aman.</string>
+    <string name="warn_shared_uid">⚠ <b>%1$d app berbagi UID yang sama</b> (mis. klon/profil kerja dari app yang sama). Karena AppOps disimpan per-UID, mengubah app ini ikut mengubah %2$d app lainnya.</string>
+    <string name="warn_shared_uid_short">Berbagi UID dengan %1$d app lain</string>
+
+    <!-- konfirmasi mode berisiko -->
+    <string name="risk_title">Terapkan mode ini?</string>
+    <string name="risk_body">Kamu akan mengubah <b>%1$s</b> untuk <b>%2$s</b>.\n\n%3$s</string>
+    <string name="risk_note_denied">Mode <b>Diblokir (deny)</b> membuat app menerima error saat memakai fitur ini — app bisa gagal total atau force close.</string>
+    <string name="risk_note_ignored">Mode <b>Diabaikan (ignore)</b> memblokir secara senyap: app terlihat normal tapi fiturnya tidak jalan. Efeknya bisa membingungkan karena tidak ada pesan apa pun di app itu.</string>
+    <string name="risk_apply">Tetap terapkan</string>
 
     <!-- hasil aksi -->
     <string name="applied">%1$s → %2$s</string>
     <string name="undo">Batal</string>
     <string name="apply_failed">Gagal</string>
-    <string name="copied">Copied: %1$s</string>
+    <string name="copied">Disalin: %1$s</string>
     <string name="loading">Memuat…</string>
+    <string name="dialog_close">Tutup</string>
+    <string name="dialog_cancel">Batal</string>
+    <string name="dialog_run">Jalankan</string>
+    <string name="dialog_apply">Terapkan</string>
+
+    <!-- snackbar -->
+    <string name="snack_shizuku_off">Shizuku tidak berjalan</string>
+    <string name="snack_shizuku_off_long">Shizuku belum berjalan — mulai dulu lewat ADB atau root</string>
+    <string name="snack_permission_missing">Izin Shizuku belum diberikan</string>
+    <string name="snack_rechecking">Izin sudah ada, memeriksa ulang…</string>
+    <string name="snack_not_connected">Belum tersambung ke Shizuku</string>
+    <string name="snack_reverted">Dikembalikan</string>
+    <string name="snack_restored_count">Dikembalikan: %1$d app</string>
+    <string name="snack_sort_now">Urutan: %1$s</string>
+    <string name="snack_no_apps">Daftar app masih kosong</string>
+    <string name="snack_no_match">Tidak ada app yang cocok untuk aksi ini</string>
+    <string name="snack_cant_open">Tidak bisa membuka: %1$s</string>
+    <string name="snack_bridge_failed">Gagal akses AppOps: %1$s</string>
+    <string name="snack_shell_active">Mode shell aktif (binder gagal: %1$s)</string>
+    <string name="snack_connected_shell">Tersambung · Shizuku shell</string>
+    <string name="snack_connected_root">Tersambung · Shizuku root</string>
+    <string name="snack_partial_fail">Sebagian gagal: %1$s</string>
+    <string name="snack_language_set">Bahasa: %1$s</string>
+    <string name="snack_risk_off">Konfirmasi mode berisiko dimatikan</string>
+    <string name="snack_risk_on">Konfirmasi mode berisiko dinyalakan</string>
 
     <!-- aksi massal & backup -->
     <string name="batch_title">Aksi massal</string>
+    <string name="batch_item_block">Blokir overlay semua app user (%1$d)</string>
+    <string name="batch_item_allow">Izinkan overlay semua app yang meminta (%1$d)</string>
+    <string name="batch_item_reset">Reset ke default semua yang eksplisit (%1$d)</string>
+    <string name="batch_block_title">Blokir overlay</string>
+    <string name="batch_allow_title">Izinkan overlay</string>
+    <string name="batch_reset_title">Reset ke default</string>
+    <string name="batch_restoring">Mengembalikan</string>
+    <string name="batch_processing">Memproses</string>
     <string name="batch_confirm">%1$d app akan diubah ke <b>%2$s</b>.</string>
+    <string name="batch_confirm_shared">%1$d app akan diubah ke <b>%2$s</b>.\n\nCatatan: karena AppOps per-UID, perubahan juga mengenai app yang berbagi UID.</string>
     <string name="batch_done">%1$d app diubah</string>
     <string name="batch_done_error">%1$d app diubah · error: %2$s</string>
     <string name="restore_title">Restore dari backup</string>
-    <string name="restore_desc">Tempel hasil backup (format <code>namapaket=status</code>) lalu tekan Terapkan. Kalau clipboard berisi backup OverlayOps, isinya sudah diisi otomatis.</string>
+    <string name="restore_desc">Tempel hasil backup (format <code>namapaket=status</code>) lalu tekan Terapkan. Kalau clipboard berisi backup AppsPerms, isinya sudah diisi otomatis.</string>
+    <string name="restore_hint">Tempel hasil backup di sini</string>
+    <string name="restore_invalid">Tidak ada baris valid di teks itu</string>
+    <string name="restore_failed">Restore: %1$d app</string>
+    <string name="restore_skipped"> · %1$d dilewati (tidak terpasang)</string>
+    <string name="restore_none_matched">Tidak ada paket di backup yang cocok dengan app terpasang</string>
+    <string name="clip_label_report">Laporan perangkat</string>
+    <string name="clip_label_backup">Backup AppsPerms</string>
+    <string name="clip_label_pkg">Nama paket</string>
 
     <!-- daftar kosong -->
     <string name="empty_no_access">Belum tersambung</string>
@@ -96,9 +154,58 @@
     <string name="open_app_info">Buka App Info</string>
     <string name="open_settings">Buka Settings overlay</string>
     <string name="ops_unavailable">Tidak bisa membaca AppOps — sambungkan Shizuku dulu.</string>
+    <string name="detail_badge_system">APP SISTEM</string>
+    <string name="detail_badge_user">APP USER</string>
+    <string name="detail_uid_value">uid %1$d</string>
+    <string name="detail_sdk_value">targetSdk %1$d</string>
+
+    <!-- menu -->
+    <string name="menu_title">Menu</string>
+    <string name="menu_group_manage">Kelola</string>
+    <string name="menu_group_diag">Diagnostik</string>
+    <string name="menu_group_help">Bantuan &amp; info</string>
+    <string name="menu_refresh">Muat ulang daftar</string>
+    <string name="menu_refresh_sub">Baca ulang status AppOps semua app</string>
+    <string name="menu_sort">Urutkan daftar</string>
+    <string name="menu_sort_sub">Sekarang: %1$s · ketuk untuk ganti</string>
+    <string name="menu_batch">Aksi massal…</string>
+    <string name="menu_batch_sub">Blokir, izinkan, atau reset overlay banyak app sekaligus</string>
+    <string name="menu_backup">Backup konfigurasi</string>
+    <string name="menu_backup_sub">Salin seluruh status ke clipboard</string>
+    <string name="menu_restore">Restore dari backup</string>
+    <string name="menu_restore_sub">Tempel hasil backup ke clipboard</string>
+    <string name="menu_report">Laporan perangkat</string>
+    <string name="menu_report_sub">Versi Android, ROM, status Shizuku, jalur aktif</string>
+    <string name="menu_copy_report">Salin laporan</string>
+    <string name="menu_copy_report_sub">Untuk lampiran saat lapor bug</string>
+    <string name="menu_shizuku">Buka app Shizuku</string>
+    <string name="menu_shizuku_sub">Kelola izin atau mulai ulang layanan</string>
+    <string name="menu_overlay_settings">Settings overlay sistem</string>
+    <string name="menu_overlay_settings_sub">Halaman bawaan Android untuk overlay</string>
+    <string name="menu_settings">Pengaturan AppsPerms</string>
+    <string name="menu_settings_sub">Bahasa, konfirmasi, dan perilaku daftar</string>
+    <string name="menu_about">Tentang AppsPerms</string>
+    <string name="menu_about_sub">Versi, cara kerja, dan privasi</string>
+    <string name="cd_menu_chevron">Buka</string>
+
+    <!-- pengaturan -->
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_subtitle">Perubahan langsung tersimpan di perangkat.</string>
+    <string name="settings_language">Bahasa tampilan</string>
+    <string name="settings_lang_system">Ikuti sistem</string>
+    <string name="settings_lang_id">Bahasa Indonesia</string>
+    <string name="settings_lang_en">English</string>
+    <string name="settings_language_note">Di Android 13+, pilihan ini juga muncul di Pengaturan sistem → Aplikasi → AppsPerms → Bahasa.</string>
+    <string name="settings_behavior">Perilaku</string>
+    <string name="settings_confirm_risk">Konfirmasi sebelum mode berisiko</string>
+    <string name="settings_confirm_risk_desc">Tanya dulu sebelum menerapkan mode Diblokir atau Diabaikan pada app yang meminta izin overlay.</string>
+    <string name="settings_warn_shared_uid">Peringatan app berbagi UID</string>
+    <string name="settings_warn_shared_uid_desc">Tampilkan catatan saat beberapa app memakai UID sama, karena perubahan izinnya ikut bersamaan.</string>
+    <string name="settings_sort">Urutan daftar saat dibuka</string>
+    <string name="settings_footer">Versi %1$s (%2$d) · tanpa iklan · tanpa izin internet</string>
 
     <!-- laporan & tentang -->
     <string name="device_report">Laporan perangkat</string>
-    <string name="about_title">Tentang OverlayOps</string>
-    <string name="about_body">OverlayOps — pengelola AppOps ringan yang fokus ke SYSTEM_ALERT_WINDOW (Display over other apps) dan 18 op terkait (kamera, mikrofon, clipboard, lokasi, dst).\n\nBuilt in XyVerse (@xykalnotkel)\n\nCara kerja: baca/tulis langsung via Shizuku tanpa root permanen. Super responsif, 100% transparan, tanpa iklan, dan tanpa izin internet (data tidak pernah keluar dari perangkat).</string>
+    <string name="about_title">Tentang AppsPerms</string>
+    <string name="about_body">AppsPerms — pengelola AppOps ringan yang fokus ke SYSTEM_ALERT_WINDOW (Display over other apps) dan 18 op terkait (kamera, mikrofon, clipboard, lokasi, dst).\n\nBuilt in XyVerse (@xykalnotkel)\n\nCara kerja: baca/tulis langsung via Shizuku tanpa root permanen. Super responsif, 100% transparan, tanpa iklan, dan tanpa izin internet (data tidak pernah keluar dari perangkat).</string>
 </resources>

@@ -1,4 +1,4 @@
-package app.overlayops.core
+package app.appsperms.core
 
 /**
  * Katalog AppOp yang ditampilkan di UI.

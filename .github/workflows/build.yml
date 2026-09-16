@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main, master ]
     tags: [ 'v*' ]
+    # Perubahan web/dokumentasi tidak perlu membangun APK.
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'LICENSE'
   pull_request:
   workflow_dispatch:
 
@@ -52,6 +57,9 @@ jobs:
             echo "::warning::Secret KEYSTORE_BASE64 belum ada — build release dilewati, hanya debug."
           fi
 
+      - name: Unit test (parser AppOps & pemetaan status)
+        run: bash ./gradlew :app:testDebugUnitTest --no-daemon --console=plain --stacktrace
+
       - name: Build debug
         run: bash ./gradlew :app:assembleDebug --no-daemon --console=plain
 
@@ -70,7 +78,7 @@ jobs:
           set -euo pipefail
           BT="$ANDROID_HOME/build-tools/34.0.0"
           VERSION=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
-          NAME="OverlayOps-$VERSION"
+          NAME="AppsPerms-$VERSION"
           mkdir -p out
 
           DEBUG_APK=app/build/outputs/apk/debug/app-debug.apk
@@ -142,7 +150,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: OverlayOps-${{ github.run_number }}
+          name: AppsPerms-${{ github.run_number }}
           path: out/*
           if-no-files-found: error
           retention-days: 30
@@ -154,12 +162,15 @@ jobs:
           files: out/*.apk
           generate_release_notes: true
           body: |
-            APK OverlayOps — pengelola AppOps (Display over other apps) via Shizuku.
+            APK **AppsPerms** — pengelola AppOps (Display over other apps) via Shizuku.
 
-            - `OverlayOps-*-release.apk` → signed keystore resmi, di-minify (R8), **disarankan**
-            - `OverlayOps-*-debug.apk` → buat troubleshooting
+            - `AppsPerms-*-release.apk` → signed keystore resmi, di-minify (R8), **disarankan**
+            - `AppsPerms-*-debug.apk` → buat troubleshooting
 
-            Catatan: versi release memakai signature berbeda dari build debug sebelumnya,
-            jadi uninstall dulu versi debug sebelum pasang yang ini.
+            > ⚠️ **Mulai v1.3.0 nama paketnya berubah** (`app.overlayops` → `app.appsperms`).
+            > Android menganggapnya aplikasi baru, jadi **uninstall versi lama (OverlayOps) dulu**,
+            > baru pasang AppsPerms dan berikan izin Shizuku sekali lagi.
+
+            Situs resmi: https://appsperms.haekal.web.id/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

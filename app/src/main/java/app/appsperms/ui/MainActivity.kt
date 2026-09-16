@@ -1,4 +1,4 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -15,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -31,20 +30,21 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import app.overlayops.R
-import app.overlayops.core.AccessSnapshot
-import app.overlayops.core.AccessState
-import app.overlayops.core.AppTypeFilter
-import app.overlayops.core.OpCatalog
-import app.overlayops.core.OpDef
-import app.overlayops.core.OpStatus
-import app.overlayops.core.ShizukuBridge
-import app.overlayops.core.SortMode
-import app.overlayops.core.StatusFilter
-import app.overlayops.databinding.ActivityMainBinding
-import app.overlayops.databinding.DialogAppDetailBinding
-import app.overlayops.databinding.ItemOpBinding
-import app.overlayops.model.AppEntry
+import app.appsperms.R
+import app.appsperms.core.AccessSnapshot
+import app.appsperms.core.AccessState
+import app.appsperms.core.AppTypeFilter
+import app.appsperms.core.OpCatalog
+import app.appsperms.core.OpDef
+import app.appsperms.core.OpStatus
+import app.appsperms.core.Settings as AppPrefs
+import app.appsperms.core.ShizukuBridge
+import app.appsperms.core.SortMode
+import app.appsperms.core.StatusFilter
+import app.appsperms.databinding.ActivityMainBinding
+import app.appsperms.databinding.DialogAppDetailBinding
+import app.appsperms.databinding.ItemOpBinding
+import app.appsperms.model.AppEntry
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
@@ -94,14 +94,20 @@ class MainActivity : AppCompatActivity() {
         binding.swipe.setProgressBackgroundColorSchemeColor(getColor(R.color.surface))
 
         binding.modeChip.setOnClickListener { showConnectionDialog() }
-        binding.menuButton.setOnClickListener { showMenu(it) }
+        binding.menuButton.setOnClickListener { showMenuSheet() }
+        // label untuk TalkBack — tombol ikon tanpa teks tidak terbaca tanpanya
+        binding.menuButton.contentDescription = getString(R.string.cd_menu)
+        binding.modeChip.contentDescription = getString(R.string.cd_status_chip)
+        binding.search.contentDescription = getString(R.string.cd_search)
+        // Urutan daftar saat app dibuka mengikuti Pengaturan.
+        viewModel.setSort(AppPrefs.defaultSort(this))
         binding.btnGrant.setOnClickListener {
             when {
                 !ShizukuBridge.isBinderAlive() ->
-                    snack("Shizuku belum berjalan — mulai dulu lewat ADB atau root")
+                    snack(getString(R.string.snack_shizuku_off_long))
 
                 ShizukuBridge.hasPermission() -> {
-                    snack("Izin sudah ada, memeriksa ulang…")
+                    snack(getString(R.string.snack_rechecking))
                     probe(null)
                 }
 
@@ -152,16 +158,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun announce(snapshot: AccessSnapshot) {
         when (snapshot.state) {
-            AccessState.SHIZUKU_OFF -> snack("Shizuku tidak berjalan")
-            AccessState.PERMISSION_DENIED -> snack("Izin Shizuku belum diberikan")
+            AccessState.SHIZUKU_OFF -> snack(getString(R.string.snack_shizuku_off))
+            AccessState.PERMISSION_DENIED -> snack(getString(R.string.snack_permission_missing))
             AccessState.BRIDGE_FAILED ->
-                snack("Gagal akses AppOps: ${snapshot.bridgeError ?: "tidak diketahui"}")
+                snack(getString(R.string.snack_bridge_failed, snapshot.bridgeError ?: "?"))
 
             AccessState.SHELL_FALLBACK ->
-                snack("Mode shell aktif (binder gagal: ${snapshot.bridgeError ?: "?"})")
+                snack(getString(R.string.snack_shell_active, snapshot.bridgeError ?: "?"))
 
-            AccessState.READY_SHELL -> snack("Tersambung · Shizuku shell")
-            AccessState.READY_ROOT -> snack("Tersambung · Shizuku root")
+            AccessState.READY_SHELL -> snack(getString(R.string.snack_connected_shell))
+            AccessState.READY_ROOT -> snack(getString(R.string.snack_connected_root))
         }
     }
 
@@ -277,12 +283,43 @@ class MainActivity : AppCompatActivity() {
 
     private fun pickOverlayStatus(entry: AppEntry) {
         if (!viewModel.state.value.snapshot.canOperate) {
-            snack("Belum tersambung ke Shizuku")
+            snack(getString(R.string.snack_not_connected))
             return
         }
         ModeSheet.show(this, entry, OpCatalog.OVERLAY, entry.overlayStatus) { status ->
-            applyAndOfferUndo(entry, OpCatalog.OVERLAY, status, entry.overlayStatus)
+            confirmThenApply(entry, OpCatalog.OVERLAY, status, entry.overlayStatus)
         }
+    }
+
+    /**
+     * Mode Diblokir/Diabaikan bisa merusak app yang memang bergantung pada op ini.
+     * Kalau pengguna tidak mematikannya di Pengaturan, tanya sekali dulu — karena
+     * efeknya tidak kelihatan langsung di app yang diubah.
+     */
+    private fun confirmThenApply(entry: AppEntry, def: OpDef, status: OpStatus, previous: OpStatus) {
+        val perluKonfirmasi = def.op == OpCatalog.OVERLAY.op &&
+            entry.declaresOverlay &&
+            (status == OpStatus.ERRORED || status == OpStatus.IGNORED) &&
+            AppPrefs.confirmRiskyModes(this)
+
+        if (!perluKonfirmasi) {
+            applyAndOfferUndo(entry, def, status, previous)
+            return
+        }
+
+        val catatan = getString(
+            if (status == OpStatus.ERRORED) R.string.risk_note_denied else R.string.risk_note_ignored
+        )
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.risk_title)
+            .setMessage(
+                getString(R.string.risk_body, getString(status.labelRes), entry.label, catatan)
+            )
+            .setPositiveButton(R.string.risk_apply) { _, _ ->
+                applyAndOfferUndo(entry, def, status, previous)
+            }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .show()
     }
 
     private fun applyAndOfferUndo(
@@ -298,7 +335,7 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.applied, entry.label, getString(status.labelRes)),
                 ) {
                     viewModel.applyStatus(entry, def, previous) { _, _ ->
-                        snack("Dikembalikan")
+                        snack(getString(R.string.snack_reverted))
                         onUndoCallback?.invoke()
                     }
                 }
@@ -311,57 +348,65 @@ class MainActivity : AppCompatActivity() {
 
     // ------------------------------------------------------------------ menu
 
-    private fun showMenu(anchor: View) {
-        val popup = PopupMenu(this, anchor)
-        val sortLabel = if (viewModel.state.value.sort == SortMode.NAME) "Status" else "Nama"
-        popup.menu.add(0, 1, 0, "Muat ulang daftar")
-        popup.menu.add(0, 7, 1, "Urutkan berdasarkan: $sortLabel")
-        popup.menu.add(0, 8, 2, "Aksi massal…")
-        popup.menu.add(0, 10, 3, "Backup konfigurasi (copy)")
-        popup.menu.add(0, 11, 4, "Restore dari backup")
-        popup.menu.add(0, 2, 5, "Laporan perangkat")
-        popup.menu.add(0, 3, 6, "Copy laporan")
-        popup.menu.add(0, 4, 7, "Buka app Shizuku")
-        popup.menu.add(0, 5, 8, "Buka Settings overlay")
-        popup.menu.add(0, 6, 9, "Tentang OverlayOps")
-        popup.setOnMenuItemClickListener { item ->
-            handleMenu(item.itemId)
-            true
-        }
-        popup.show()
+    private fun showMenuSheet() {
+        val sortLabel = getString(viewModel.state.value.sort.labelRes)
+        MenuSheet.show(this, sortLabel) { action -> handleMenu(action) }
     }
 
-    private fun handleMenu(id: Int) {
-        when (id) {
-            1 -> viewModel.refresh()
+    /** Pengaturan ringan: bahasa, konfirmasi mode berisiko, peringatan UID, urutan daftar. */
+    private fun showSettings() {
+        SettingsSheet.show(this) { message ->
+            snack(message)
+            // Urutan default bisa berubah -> langsung diterapkan supaya konsisten.
+            viewModel.setSort(AppPrefs.defaultSort(this))
+        }
+    }
 
-            2 -> MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.device_report)
-                .setMessage(viewModel.deviceReport())
-                .setPositiveButton("Tutup", null)
-                .show()
+    private fun handleMenu(action: MenuAction) {
+        when (action) {
+            MenuAction.REFRESH -> viewModel.refresh()
 
-            3 -> copyToClipboard(viewModel.deviceReport(), "Laporan perangkat")
-            4 -> openShizukuApp()
-            5 -> startActivitySafely(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
-            6 -> showAbout()
-            7 -> {
+            MenuAction.SORT -> {
                 val next = if (viewModel.state.value.sort == SortMode.NAME) SortMode.STATUS else SortMode.NAME
                 viewModel.setSort(next)
-                snack("Urutan: ${getString(next.labelRes)}")
+                snack(getString(R.string.snack_sort_now, getString(next.labelRes)))
             }
 
-            8 -> showBatchDialog()
-            10 -> copyToClipboard(viewModel.exportBackup(), "Backup OverlayOps")
-            11 -> showRestoreDialog()
-            else -> Unit
+            MenuAction.BATCH -> showBatchDialog()
+
+            MenuAction.BACKUP -> copyToClipboard(
+                viewModel.exportBackup(),
+                getString(R.string.clip_label_backup),
+            )
+
+            MenuAction.RESTORE -> showRestoreDialog()
+
+            MenuAction.REPORT -> MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.device_report)
+                .setMessage(viewModel.deviceReport())
+                .setPositiveButton(R.string.dialog_close, null)
+                .show()
+
+            MenuAction.COPY_REPORT -> copyToClipboard(
+                viewModel.deviceReport(),
+                getString(R.string.clip_label_report),
+            )
+
+            MenuAction.SHIZUKU -> openShizukuApp()
+
+            MenuAction.OVERLAY_SETTINGS ->
+                startActivitySafely(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+
+            MenuAction.SETTINGS -> showSettings()
+
+            MenuAction.ABOUT -> showAbout()
         }
     }
 
     private fun showBatchDialog() {
         val apps = viewModel.appsNow()
         if (apps.isEmpty()) {
-            snack("Daftar app masih kosong")
+            snack(getString(R.string.snack_no_apps))
             return
         }
         val userApps = apps.filter { !it.isSystem && (it.declaresOverlay || it.overlayStatus.isExplicit) }
@@ -371,34 +416,45 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.batch_title)
             .setItems(
                 arrayOf(
-                    "Blokir overlay semua app user (${userApps.size})",
-                    "Izinkan overlay semua app yang meminta (${declared.size})",
-                    "Reset ke default semua yang eksplisit (${apps.count { it.overlayStatus.isExplicit }})",
+                    getString(R.string.batch_item_block, userApps.size),
+                    getString(R.string.batch_item_allow, declared.size),
+                    getString(R.string.batch_item_reset, apps.count { it.overlayStatus.isExplicit }),
                 ),
             ) { _, which ->
                 when (which) {
-                    0 -> confirmBatch(userApps, OpStatus.ERRORED, "Blokir overlay")
-                    1 -> confirmBatch(declared, OpStatus.ALLOWED, "Izinkan overlay")
+                    0 -> confirmBatch(userApps, OpStatus.ERRORED, getString(R.string.batch_block_title))
+                    1 -> confirmBatch(declared, OpStatus.ALLOWED, getString(R.string.batch_allow_title))
                     else -> confirmBatch(
                         apps.filter { it.overlayStatus.isExplicit },
                         OpStatus.DEFAULT,
-                        "Reset ke default",
+                        getString(R.string.batch_reset_title),
                     )
                 }
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton(R.string.dialog_cancel, null)
             .show()
     }
 
     private fun confirmBatch(entries: List<AppEntry>, status: OpStatus, title: String) {
         if (entries.isEmpty()) {
-            snack("Tidak ada app yang cocok untuk aksi ini")
+            snack(getString(R.string.snack_no_match))
             return
         }
         MaterialAlertDialogBuilder(this)
             .setTitle(title)
-            .setMessage(getString(R.string.batch_confirm, entries.size, getString(status.labelRes)))
-            .setPositiveButton("Jalankan") { _, _ ->
+            .setMessage(
+                // Kalau ada target yang berbagi UID, peringatkan sekali di sini juga.
+                if (AppPrefs.warnSharedUid(this) && entries.any { it.sharedUidCount > 1 }) {
+                    getString(
+                        R.string.batch_confirm_shared,
+                        entries.size,
+                        getString(status.labelRes),
+                    )
+                } else {
+                    getString(R.string.batch_confirm, entries.size, getString(status.labelRes))
+                },
+            )
+            .setPositiveButton(R.string.dialog_run) { _, _ ->
                 viewModel.batchApplyOverlay(entries, status) { applied, error, previous ->
                     val message = if (error == null) {
                         getString(R.string.batch_done, applied)
@@ -406,27 +462,30 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.batch_done_error, applied, error)
                     }
                     snackWithUndo(message) {
-                        viewModel.applyTargets(previous, "Mengembalikan") { count, err ->
-                            snack(if (err == null) "Dikembalikan: $count app" else "Sebagian gagal: $err")
+                        viewModel.applyTargets(previous, getString(R.string.batch_restoring)) { count, err ->
+                            snack(
+                                if (err == null) getString(R.string.snack_restored_count, count)
+                                else getString(R.string.snack_partial_fail, err)
+                            )
                         }
                     }
                 }
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton(R.string.dialog_cancel, null)
             .show()
     }
 
     private fun showRestoreDialog() {
         val clipboardText = readClipboard()
         val input = EditText(this).apply {
-            hint = "Tempel hasil backup di sini"
+            hint = getString(R.string.restore_hint)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             minLines = 5
             maxLines = 12
             setTextColor(getColor(R.color.on_surface))
             setHintTextColor(getColor(R.color.on_surface_dim))
             setPadding(0, dp(10), 0, 0)
-            if (clipboardText.contains("# OverlayOps backup")) setText(clipboardText)
+            if (clipboardText.contains("# AppsPerms backup")) setText(clipboardText)
         }
         val container = FrameLayout(this).apply {
             setPadding(dp(20), dp(4), dp(20), 0)
@@ -442,22 +501,22 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.restore_title)
             .setMessage(R.string.restore_desc)
             .setView(container)
-            .setPositiveButton("Terapkan") { _, _ ->
+            .setPositiveButton(R.string.dialog_apply) { _, _ ->
                 val pairs = viewModel.parseBackup(input.text.toString())
                 if (pairs.isEmpty()) {
-                    showError("Tidak ada baris valid di teks itu")
+                    showError(getString(R.string.restore_invalid))
                     return@setPositiveButton
                 }
                 viewModel.restoreFrom(pairs) { applied, skipped, error ->
                     val msg = buildString {
-                        append("Restore: $applied app")
-                        if (skipped > 0) append(" · $skipped dilewati (tidak terpasang)")
-                        error?.let { append(" · error: $it") }
+                        append(getString(R.string.restore_failed, applied))
+                        if (skipped > 0) append(getString(R.string.restore_skipped, skipped))
+                        error?.let { append(" · ").append(it) }
                     }
                     snack(msg)
                 }
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton(R.string.dialog_cancel, null)
             .show()
     }
 
@@ -467,10 +526,10 @@ class MainActivity : AppCompatActivity() {
             .setMessage(viewModel.deviceReport())
             .setPositiveButton(R.string.request_permission) { _, _ ->
                 if (ShizukuBridge.isBinderAlive()) ShizukuBridge.requestPermission()
-                else snack("Shizuku belum berjalan")
+                else snack(getString(R.string.snack_shizuku_off))
             }
             .setNeutralButton(R.string.open_shizuku) { _, _ -> openShizukuApp() }
-            .setNegativeButton("Tutup", null)
+            .setNegativeButton(R.string.dialog_close, null)
             .show()
     }
 
@@ -478,7 +537,7 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.about_title)
             .setMessage(getString(R.string.about_body))
-            .setPositiveButton("Tutup", null)
+            .setPositiveButton(R.string.dialog_close, null)
             .show()
     }
 
@@ -489,10 +548,14 @@ class MainActivity : AppCompatActivity() {
         b.detailIcon.setImageDrawable(entry.icon)
         b.detailLabel.text = entry.label
         b.detailPkg.text = entry.packageName
-        b.detailBadgeUid.text = "uid ${entry.uid}"
-        b.detailBadgeSdk.text = "targetSdk ${entry.targetSdk}"
-        b.detailBadgeType.text = if (entry.isSystem) "APP SISTEM" else "APP USER"
-        b.btnCopyPkg.setOnClickListener { copyToClipboard(entry.packageName, "Nama paket") }
+        b.detailBadgeUid.text = getString(R.string.detail_uid_value, entry.uid)
+        b.detailBadgeSdk.text = getString(R.string.detail_sdk_value, entry.targetSdk)
+        b.detailBadgeType.text = getString(
+            if (entry.isSystem) R.string.detail_badge_system else R.string.detail_badge_user
+        )
+        b.btnCopyPkg.setOnClickListener {
+            copyToClipboard(entry.packageName, getString(R.string.clip_label_pkg))
+        }
         b.btnAppInfo.setOnClickListener { openAppInfo(entry.packageName) }
         b.btnSystemSettings.setOnClickListener {
             startActivitySafely(
@@ -511,7 +574,7 @@ class MainActivity : AppCompatActivity() {
 
         detailDialog = MaterialAlertDialogBuilder(this)
             .setView(b.root)
-            .setPositiveButton("Tutup", null)
+            .setPositiveButton(R.string.dialog_close, null)
             .create()
         detailDialog?.show()
 
@@ -576,7 +639,7 @@ class MainActivity : AppCompatActivity() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } catch (t: Throwable) {
-            snack("Tidak bisa membuka: ${t.message}")
+            snack(getString(R.string.snack_cant_open, t.message ?: "?"))
         }
     }
 
@@ -596,7 +659,7 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.apply_failed)
             .setMessage(message)
-            .setPositiveButton("Tutup", null)
+            .setPositiveButton(R.string.dialog_close, null)
             .show()
     }
 

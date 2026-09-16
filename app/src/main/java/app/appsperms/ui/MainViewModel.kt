@@ -1,18 +1,19 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import app.overlayops.core.AccessSnapshot
-import app.overlayops.core.AppTypeFilter
-import app.overlayops.core.OpCatalog
-import app.overlayops.core.OpDef
-import app.overlayops.core.OpStatus
-import app.overlayops.core.ShizukuBridge
-import app.overlayops.core.SortMode
-import app.overlayops.core.StatusFilter
-import app.overlayops.data.AppsRepository
-import app.overlayops.model.AppEntry
+import app.appsperms.R
+import app.appsperms.core.AccessSnapshot
+import app.appsperms.core.AppTypeFilter
+import app.appsperms.core.OpCatalog
+import app.appsperms.core.OpDef
+import app.appsperms.core.OpStatus
+import app.appsperms.core.ShizukuBridge
+import app.appsperms.core.SortMode
+import app.appsperms.core.StatusFilter
+import app.appsperms.data.AppsRepository
+import app.appsperms.model.AppEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -175,7 +176,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         onDone: (applied: Int, error: String?, previous: List<Pair<AppEntry, OpStatus>>) -> Unit,
     ) {
         val previous = entries.map { it to it.overlayStatus }
-        applyTargets(entries.map { it to status }, "Memproses") { applied, error ->
+        applyTargets(entries.map { it to status }, getApplication<Application>().getString(R.string.batch_processing)) { applied, error ->
             onDone(applied, error, previous)
         }
     }
@@ -191,10 +192,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
         val skipped = pairs.size - targets.size
         if (targets.isEmpty()) {
-            onDone(0, skipped, "Tidak ada paket di backup yang cocok dengan app terpasang")
+            onDone(0, skipped, getApplication<Application>().getString(R.string.restore_none_matched))
             return
         }
-        applyTargets(targets, "Restore") { applied, error -> onDone(applied, skipped, error) }
+        applyTargets(targets, getApplication<Application>().getString(R.string.batch_processing)) { applied, error -> onDone(applied, skipped, error) }
     }
 
     fun exportBackup(): String = repo.exportBackup(_state.value.apps)
@@ -245,11 +246,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val systemApps = sorted.filter { it.isSystem }
         return buildList {
             if (userApps.isNotEmpty()) {
-                add(ListItem.Header("App terinstall", userApps.size))
+                add(ListItem.Header(getApplication<Application>().getString(R.string.header_user_apps), userApps.size))
                 userApps.forEach { add(ListItem.App(it)) }
             }
             if (systemApps.isNotEmpty()) {
-                add(ListItem.Header("App sistem", systemApps.size))
+                add(ListItem.Header(getApplication<Application>().getString(R.string.header_system_apps), systemApps.size))
                 systemApps.forEach { add(ListItem.App(it)) }
             }
         }

@@ -10,15 +10,15 @@ val hasReleaseKeystore: Boolean =
     !keystorePath.isNullOrBlank() && File(keystorePath).exists()
 
 android {
-    namespace = "app.overlayops"
+    namespace = "app.appsperms"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "app.overlayops"
+        applicationId = "app.appsperms"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.3.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -64,6 +64,8 @@ android {
 
     buildFeatures {
         viewBinding = true
+        // Dipakai untuk menampilkan versi di layar Pengaturan.
+        buildConfig = true
     }
 
     packaging {
@@ -89,4 +91,6 @@ dependencies {
 
     // Buka blokir hidden API (IAppOpsService) di Android 9+
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
+
+    testImplementation("junit:junit:4.13.2")
 }

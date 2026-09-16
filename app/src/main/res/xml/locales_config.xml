@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bahasa yang didukung app. Di Android 13+ daftar ini muncul di
+     Pengaturan sistem → Aplikasi → AppsPerms → Bahasa. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="in" />
+    <locale android:name="en" />
+</locale-config>

@@ -1,4 +1,7 @@
-# OverlayOps
+# AppsPerms
+
+> **Catatan v1.3.0:** nama paket berubah `app.overlayops` → `app.appsperms`, jadi Android
+> menganggapnya app baru — uninstall versi OverlayOps dulu sebelum memasang AppsPerms.
 
 Aplikasi Android modern & super ringan untuk mengelola **AppOps tersembunyi** — fokus utama op
 `SYSTEM_ALERT_WINDOW` (**Display over other apps**), plus 18 op penting lainnya (kamera, mikrofon,

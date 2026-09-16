@@ -1,6 +1,6 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
-import app.overlayops.model.AppEntry
+import app.appsperms.model.AppEntry
 
 /** Isi RecyclerView: pemisah section (app terinstall / app sistem) + baris app. */
 sealed interface ListItem {

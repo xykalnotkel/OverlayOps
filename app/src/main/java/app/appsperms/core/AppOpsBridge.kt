@@ -1,4 +1,4 @@
-package app.overlayops.core
+package app.appsperms.core
 
 import android.app.AppOpsManager
 import android.content.pm.PackageManager

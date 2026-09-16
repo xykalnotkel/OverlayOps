@@ -1,0 +1,211 @@
+<resources>
+    <string name="app_name">AppsPerms</string>
+    <string name="app_subtitle">Built in XyVerse · via Shizuku</string>
+
+    <!-- tabs & search -->
+    <string name="tab_overlay">Overlay</string>
+    <string name="tab_apps">All apps</string>
+    <string name="tab_overlay_count">Overlay · %1$d</string>
+    <string name="tab_apps_count">All apps · %1$d</string>
+    <string name="search_hint">Search app name or package…</string>
+    <string name="cd_search">App search field</string>
+    <string name="cd_menu">Open menu</string>
+    <string name="cd_status_chip">Shizuku connection status, tap for details</string>
+
+    <!-- filters -->
+    <string name="type_all">All</string>
+    <string name="type_user">Installed</string>
+    <string name="type_system">System</string>
+    <string name="filter_all">Any status</string>
+    <string name="filter_allowed">Allowed</string>
+    <string name="filter_denied">Blocked</string>
+    <string name="filter_default">Default</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_status">Status</string>
+
+    <!-- list headers -->
+    <string name="header_user_apps">Installed apps</string>
+    <string name="header_system_apps">System apps</string>
+
+    <!-- op status -->
+    <string name="status_allowed">Allowed</string>
+    <string name="status_denied">Blocked</string>
+    <string name="status_default">Default</string>
+    <string name="status_ignored">Ignored</string>
+    <string name="status_foreground">Foreground</string>
+    <string name="status_unknown">Unknown</string>
+
+    <string name="desc_allowed">The app may use this feature fully.</string>
+    <string name="desc_ignored">Treated as never answered — the app fails silently, least likely to crash.</string>
+    <string name="desc_denied">Hard denial: the app receives an error, so the feature may fail or the app may crash.</string>
+    <string name="desc_foreground">Only allowed while the app is in the foreground.</string>
+    <string name="desc_default">Follow system settings / the app normal permission (safest when unsure).</string>
+    <string name="desc_unknown">Status could not be read on this device.</string>
+
+    <!-- connection states -->
+    <string name="state_off">Shizuku off</string>
+    <string name="state_no_permission">No permission</string>
+    <string name="state_bridge_failed">Access failed</string>
+    <string name="state_shell_fallback">Shell mode</string>
+    <string name="state_ready_shell">Shizuku · shell</string>
+    <string name="state_ready_root">Shizuku · root</string>
+
+    <string name="setup_title">Connect to Shizuku</string>
+    <string name="setup_off">Shizuku is not running. Start it with root, or pair ADB wireless debugging, then tap Request permission.</string>
+    <string name="setup_permission">Shizuku is running — just grant permission to AppsPerms. If no dialog appears, open the Shizuku app → Authorized applications → enable AppsPerms.</string>
+    <string name="setup_bridge_failed">Permission granted, but access to AppOps failed:\n%1$s\n\nOpen the device report from the menu for details.</string>
+    <string name="request_permission">Request permission</string>
+    <string name="recheck_permission">Check again</string>
+    <string name="open_shizuku">Open Shizuku</string>
+    <string name="connection_title">Connection status</string>
+
+    <!-- mode sheet -->
+    <string name="sheet_current">Current status: <b>%1$s</b> (%2$s)</string>
+    <string name="warn_overlay_break">⚠ This app requests the overlay permission in its manifest. Blocking it can break bubbles, floating buttons, or other features — some apps even crash. Choose <b>Ignored</b> if you want the safer option.</string>
+    <string name="warn_shared_uid">⚠ <b>%1$d apps share the same UID</b> (for example clones or work profiles of one app). Because AppOps is stored per UID, changing this app also changes the other %2$d apps.</string>
+    <string name="warn_shared_uid_short">Shares UID with %1$d other app(s)</string>
+
+    <!-- risky mode confirmation -->
+    <string name="risk_title">Apply this mode?</string>
+    <string name="risk_body">You are about to change <b>%1$s</b> for <b>%2$s</b>.\n\n%3$s</string>
+    <string name="risk_note_denied">The <b>Blocked (deny)</b> mode makes the app receive an error when using this feature — it can fail completely or force close.</string>
+    <string name="risk_note_ignored">The <b>Ignored</b> mode blocks silently: the app looks normal but its feature does not work. This can be confusing because the app shows no message at all.</string>
+    <string name="risk_apply">Apply anyway</string>
+
+    <!-- action results -->
+    <string name="applied">%1$s → %2$s</string>
+    <string name="undo">Undo</string>
+    <string name="apply_failed">Failed</string>
+    <string name="copied">Copied: %1$s</string>
+    <string name="loading">Loading…</string>
+    <string name="dialog_close">Close</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_run">Run</string>
+    <string name="dialog_apply">Apply</string>
+
+    <!-- snackbars -->
+    <string name="snack_shizuku_off">Shizuku is not running</string>
+    <string name="snack_shizuku_off_long">Shizuku is not running — start it via ADB or root first</string>
+    <string name="snack_permission_missing">Shizuku permission has not been granted</string>
+    <string name="snack_rechecking">Permission already granted, checking again…</string>
+    <string name="snack_not_connected">Not connected to Shizuku yet</string>
+    <string name="snack_reverted">Reverted</string>
+    <string name="snack_restored_count">Reverted: %1$d apps</string>
+    <string name="snack_sort_now">Order: %1$s</string>
+    <string name="snack_no_apps">The app list is still empty</string>
+    <string name="snack_no_match">No app matches this action</string>
+    <string name="snack_cant_open">Cannot open: %1$s</string>
+    <string name="snack_bridge_failed">AppOps access failed: %1$s</string>
+    <string name="snack_shell_active">Shell mode active (binder failed: %1$s)</string>
+    <string name="snack_connected_shell">Connected · Shizuku shell</string>
+    <string name="snack_connected_root">Connected · Shizuku root</string>
+    <string name="snack_partial_fail">Partly failed: %1$s</string>
+    <string name="snack_language_set">Language: %1$s</string>
+    <string name="snack_risk_off">Risky mode confirmation turned off</string>
+    <string name="snack_risk_on">Risky mode confirmation turned on</string>
+
+    <!-- batch & backup -->
+    <string name="batch_title">Batch actions</string>
+    <string name="batch_item_block">Block overlay for all user apps (%1$d)</string>
+    <string name="batch_item_allow">Allow overlay for all requesting apps (%1$d)</string>
+    <string name="batch_item_reset">Reset all explicit ones to default (%1$d)</string>
+    <string name="batch_block_title">Block overlay</string>
+    <string name="batch_allow_title">Allow overlay</string>
+    <string name="batch_reset_title">Reset to default</string>
+    <string name="batch_restoring">Reverting</string>
+    <string name="batch_processing">Processing</string>
+    <string name="batch_confirm">%1$d apps will be changed to <b>%2$s</b>.</string>
+    <string name="batch_confirm_shared">%1$d apps will be changed to <b>%2$s</b>.\n\nNote: because AppOps works per UID, apps sharing a UID are affected too.</string>
+    <string name="batch_done">%1$d apps changed</string>
+    <string name="batch_done_error">%1$d apps changed · error: %2$s</string>
+    <string name="restore_title">Restore from backup</string>
+    <string name="restore_desc">Paste the backup text (format <code>packagename=status</code>) then tap Apply. If the clipboard already contains an AppsPerms backup, it is filled in automatically.</string>
+    <string name="restore_hint">Paste the backup text here</string>
+    <string name="restore_invalid">No valid line found in that text</string>
+    <string name="restore_failed">Restore: %1$d apps</string>
+    <string name="restore_skipped"> · %1$d skipped (not installed)</string>
+    <string name="restore_none_matched">No package in the backup matches an installed app</string>
+    <string name="clip_label_report">Device report</string>
+    <string name="clip_label_backup">AppsPerms backup</string>
+    <string name="clip_label_pkg">Package name</string>
+
+    <!-- empty states -->
+    <string name="empty_no_access">Not connected</string>
+    <string name="empty_no_access_desc">Follow the steps in the card above to connect Shizuku, then pull down to reload.</string>
+    <string name="empty_no_data">No data yet</string>
+    <string name="empty_no_data_desc">The app list is still empty. Make sure Shizuku is running, then pull down to refresh.</string>
+    <string name="empty_no_explicit">No explicit overlay yet</string>
+    <string name="empty_no_explicit_desc">No app has an explicit overlay op. Switch to the All apps tab to see the full list.</string>
+    <string name="empty_no_result">No results</string>
+    <string name="empty_no_result_desc">Try changing the keyword, type filter, or status filter.</string>
+
+    <!-- hint bar -->
+    <string name="hint_default">%1$d apps · %2$d overlay · %3$d allowed · %4$d blocked — tap for details, long-press to change</string>
+    <string name="hint_filtered">%1$d apps installed · filter active (%2$d overlay · %3$d allowed · %4$d blocked)</string>
+
+    <!-- app detail -->
+    <string name="app_detail">App details</string>
+    <string name="package_name">Package name</string>
+    <string name="uid">UID</string>
+    <string name="system_app">System app</string>
+    <string name="target_sdk">Target SDK</string>
+    <string name="ops_list">Related AppOps</string>
+    <string name="copy_pkg">Copy package name</string>
+    <string name="open_app_info">Open App info</string>
+    <string name="open_settings">Open overlay settings</string>
+    <string name="ops_unavailable">Cannot read AppOps — connect Shizuku first.</string>
+    <string name="detail_badge_system">SYSTEM APP</string>
+    <string name="detail_badge_user">USER APP</string>
+    <string name="detail_uid_value">uid %1$d</string>
+    <string name="detail_sdk_value">targetSdk %1$d</string>
+
+    <!-- menu -->
+    <string name="menu_title">Menu</string>
+    <string name="menu_group_manage">Manage</string>
+    <string name="menu_group_diag">Diagnostics</string>
+    <string name="menu_group_help">Help &amp; info</string>
+    <string name="menu_refresh">Reload list</string>
+    <string name="menu_refresh_sub">Re-read AppOps status for every app</string>
+    <string name="menu_sort">Sort list</string>
+    <string name="menu_sort_sub">Currently: %1$s · tap to switch</string>
+    <string name="menu_batch">Batch actions…</string>
+    <string name="menu_batch_sub">Block, allow, or reset overlay for many apps at once</string>
+    <string name="menu_backup">Back up configuration</string>
+    <string name="menu_backup_sub">Copy every status to the clipboard</string>
+    <string name="menu_restore">Restore from backup</string>
+    <string name="menu_restore_sub">Paste a backup from the clipboard</string>
+    <string name="menu_report">Device report</string>
+    <string name="menu_report_sub">Android version, ROM, Shizuku status, active path</string>
+    <string name="menu_copy_report">Copy report</string>
+    <string name="menu_copy_report_sub">Handy when filing a bug report</string>
+    <string name="menu_shizuku">Open Shizuku app</string>
+    <string name="menu_shizuku_sub">Manage permission or restart the service</string>
+    <string name="menu_overlay_settings">System overlay settings</string>
+    <string name="menu_overlay_settings_sub">Android built-in page for overlays</string>
+    <string name="menu_settings">AppsPerms settings</string>
+    <string name="menu_settings_sub">Language, confirmations, and list behaviour</string>
+    <string name="menu_about">About AppsPerms</string>
+    <string name="menu_about_sub">Version, how it works, privacy</string>
+    <string name="cd_menu_chevron">Open</string>
+
+    <!-- settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Changes are stored on this device immediately.</string>
+    <string name="settings_language">Display language</string>
+    <string name="settings_lang_system">Follow system</string>
+    <string name="settings_lang_id">Bahasa Indonesia</string>
+    <string name="settings_lang_en">English</string>
+    <string name="settings_language_note">On Android 13+, this choice also appears in System settings → Apps → AppsPerms → Language.</string>
+    <string name="settings_behavior">Behaviour</string>
+    <string name="settings_confirm_risk">Confirm before risky modes</string>
+    <string name="settings_confirm_risk_desc">Ask first before applying Blocked or Ignored mode to an app that requests the overlay permission.</string>
+    <string name="settings_warn_shared_uid">Shared UID warnings</string>
+    <string name="settings_warn_shared_uid_desc">Show a note when several apps use the same UID, since their permissions change together.</string>
+    <string name="settings_sort">List order on open</string>
+    <string name="settings_footer">Version %1$s (%2$d) · no ads · no internet permission</string>
+
+    <!-- report & about -->
+    <string name="device_report">Device report</string>
+    <string name="about_title">About AppsPerms</string>
+    <string name="about_body">AppsPerms — a lightweight AppOps manager focused on SYSTEM_ALERT_WINDOW (Display over other apps) plus 18 related ops (camera, microphone, clipboard, location, and more).\n\nBuilt in XyVerse (@xykalnotkel)\n\nHow it works: reads and writes directly through Shizuku without permanent root. Super responsive, 100% transparent, no ads, and no internet permission (data can never leave the device).</string>
+</resources>

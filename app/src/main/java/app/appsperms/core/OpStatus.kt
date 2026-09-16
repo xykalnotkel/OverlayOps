@@ -1,9 +1,9 @@
-package app.overlayops.core
+package app.appsperms.core
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
-import app.overlayops.R
-import app.overlayops.model.AppEntry
+import app.appsperms.R
+import app.appsperms.model.AppEntry
 
 /**
  * Status sebuah AppOp, dipetakan langsung ke mode integer di AppOpsManager.

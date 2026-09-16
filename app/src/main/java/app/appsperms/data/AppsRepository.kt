@@ -1,4 +1,4 @@
-package app.overlayops.data
+package app.appsperms.data
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -6,12 +6,12 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.util.LruCache
-import app.overlayops.core.AppOpsBridge
-import app.overlayops.core.OpCatalog
-import app.overlayops.core.OpDef
-import app.overlayops.core.OpStatus
-import app.overlayops.core.ShizukuBridge
-import app.overlayops.model.AppEntry
+import app.appsperms.core.AppOpsBridge
+import app.appsperms.core.OpCatalog
+import app.appsperms.core.OpDef
+import app.appsperms.core.OpStatus
+import app.appsperms.core.ShizukuBridge
+import app.appsperms.model.AppEntry
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,8 +54,14 @@ class AppsRepository(private val context: Context) {
         // Satu tembakan untuk semua paket (4 perintah), bukan satu perintah per app.
         val bulk: Map<String, OpStatus>? = if (preferShell) ShizukuBridge.shellQueryOverlayBulk() else null
 
+        // Berapa paket yang berbagi UID? AppOps disimpan per-UID, jadi app dengan UID
+        // sama (klon / profil kerja) ikut berubah saat salah satunya diubah.
+        val uidCounts: Map<Int, Int> = infos.groupingBy { it.uid }.eachCount()
+
         return infos.asSequence()
-            .mapNotNull { info -> toEntry(info, bulk, declaredOverlaySet, preferShell) }
+            .mapNotNull { info ->
+                toEntry(info, bulk, declaredOverlaySet, preferShell, uidCounts[info.uid] ?: 1)
+            }
             .sortedBy { it.labelLower }
             .toList()
     }
@@ -65,6 +71,7 @@ class AppsRepository(private val context: Context) {
         bulk: Map<String, OpStatus>?,
         declaredOverlaySet: Set<String>,
         preferShell: Boolean,
+        sharedUidCount: Int,
     ): AppEntry? {
         val pkg = info.packageName ?: return null
         val isSystem = (info.flags and (ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0
@@ -93,6 +100,7 @@ class AppsRepository(private val context: Context) {
             declaresOverlay = declaresOverlay,
             icon = icon,
             overlayStatus = status,
+            sharedUidCount = sharedUidCount,
         )
     }
 

@@ -1,4 +1,4 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import app.overlayops.R
-import app.overlayops.core.OpCatalog
-import app.overlayops.core.OpDef
-import app.overlayops.core.OpStatus
-import app.overlayops.databinding.ItemModeOptionBinding
-import app.overlayops.databinding.SheetModeBinding
-import app.overlayops.model.AppEntry
+import app.appsperms.R
+import app.appsperms.core.OpCatalog
+import app.appsperms.core.OpDef
+import app.appsperms.core.OpStatus
+import app.appsperms.core.Settings
+import app.appsperms.databinding.ItemModeOptionBinding
+import app.appsperms.databinding.SheetModeBinding
+import app.appsperms.model.AppEntry
 
 /**
  * Bottom sheet pemilih mode: tiap opsi diberi penjelasan singkat + konsekuensinya,
@@ -38,9 +39,22 @@ object ModeSheet {
             OpStatus.shellName(current),
         )
 
+        val peringatan = mutableListOf<String>()
+
         if (def.op == OpCatalog.OVERLAY.op && entry.declaresOverlay) {
+            peringatan += context.getString(R.string.warn_overlay_break)
+        }
+        // AppOps disimpan per-UID: klon / profil kerja satu app akan ikut berubah.
+        if (entry.sharedUidCount > 1 && Settings.warnSharedUid(context)) {
+            peringatan += context.getString(
+                R.string.warn_shared_uid,
+                entry.sharedUidCount,
+                entry.sharedUidCount - 1,
+            )
+        }
+        if (peringatan.isNotEmpty()) {
             b.sheetWarning.isVisible = true
-            b.sheetWarning.text = context.getString(R.string.warn_overlay_break)
+            b.sheetWarning.text = peringatan.joinToString("\n\n")
         }
 
         OpStatus.choices.forEach { status ->

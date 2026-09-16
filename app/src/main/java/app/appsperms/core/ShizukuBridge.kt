@@ -1,4 +1,4 @@
-package app.overlayops.core
+package app.appsperms.core
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -162,10 +162,7 @@ object ShizukuBridge {
                 ?: continue
             if (!result.ok) continue
             anySuccess = true
-            result.stdout.lineSequence()
-                .map { it.trim() }
-                .filter { it.isNotEmpty() && !it.startsWith("Uid") && !it.contains(':') }
-                .forEach { map[it] = status }
+            AppOpsParser.parseQueryOpPackages(result.stdout).forEach { map[it] = status }
         }
         return if (anySuccess) map else null
     }
@@ -180,30 +177,11 @@ object ShizukuBridge {
     }
 
     /**
-     * Parser `appops get <pkg>` yang toleran terhadap perbedaan ROM.
-     * Contoh baris yang ditangani:
-     *   SYSTEM_ALERT_WINDOW: allow
-     *   RUN_ANY_IN_BACKGROUND: ignore; time=+1m2s
-     *   Uid mode: RUN_ANY_IN_BACKGROUND: foreground
+     * Parser `appops get <pkg>` — logikanya dipindah ke [AppOpsParser] supaya bisa
+     * diuji lewat unit test JVM tanpa Android. Fungsi ini tinggal jadi jembatan.
      */
-    fun parseAppOpsGet(output: String): Map<String, OpStatus> {
-        val map = HashMap<String, OpStatus>()
-        val namePattern = Regex("^[A-Z][A-Z0-9_]{2,}$")
-        output.lineSequence().forEach { raw ->
-            var line = raw.trim()
-            if (line.startsWith("Uid mode:", ignoreCase = true)) {
-                line = line.substringAfter(':').trim()
-            }
-            val idx = line.indexOf(':')
-            if (idx <= 0) return@forEach
-            val key = line.substring(0, idx).trim()
-            if (!namePattern.matches(key)) return@forEach
-            val rest = line.substring(idx + 1).trim()
-            val mode = rest.substringBefore(';').trim().substringBefore(' ').trim()
-            if (mode.isNotEmpty()) map[key] = OpStatus.forShellName(mode)
-        }
-        return map
-    }
+    fun parseAppOpsGet(output: String): Map<String, OpStatus> =
+        AppOpsParser.parseAppOpsGet(output)
 
     /** Tulis satu op: `appops set --uid <pkg> <OP> <mode>`. */
     fun shellSetOp(pkg: String, shellOp: String, status: OpStatus): String? {

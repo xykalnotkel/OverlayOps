@@ -1,4 +1,4 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,9 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import app.overlayops.databinding.ItemAppBinding
-import app.overlayops.databinding.ItemHeaderBinding
-import app.overlayops.model.AppEntry
+import app.appsperms.databinding.ItemAppBinding
+import app.appsperms.databinding.ItemHeaderBinding
+import app.appsperms.model.AppEntry
 
 class AppListAdapter(
     private val onOpen: (AppEntry) -> Unit,

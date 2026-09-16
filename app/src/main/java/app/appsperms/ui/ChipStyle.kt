@@ -1,10 +1,10 @@
-package app.overlayops.ui
+package app.appsperms.ui
 
 import android.content.res.ColorStateList
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
-import app.overlayops.core.OpStatus
+import app.appsperms.core.OpStatus
 
 /** Warnai chip status sesuai statusnya (teks penuh + background transparan). */
 fun TextView.bindStatusChip(status: OpStatus) {

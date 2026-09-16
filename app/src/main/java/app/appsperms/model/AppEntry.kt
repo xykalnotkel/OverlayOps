@@ -1,7 +1,7 @@
-package app.overlayops.model
+package app.appsperms.model
 
 import android.graphics.drawable.Drawable
-import app.overlayops.core.OpStatus
+import app.appsperms.core.OpStatus
 
 data class AppEntry(
     val packageName: String,
@@ -13,6 +13,8 @@ data class AppEntry(
     val declaresOverlay: Boolean,
     val icon: Drawable?,
     val overlayStatus: OpStatus = OpStatus.UNKNOWN,
+    /** Jumlah paket (termasuk app ini) yang berbagi UID sama. Di atas 1 = klon/profil kerja. */
+    val sharedUidCount: Int = 1,
 ) {
     val labelLower: String = label.lowercase()
     val packageLower: String = packageName.lowercase()
