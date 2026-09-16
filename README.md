@@ -13,7 +13,8 @@ responsif tanpa jeda (**0ms Optimistic UI**), dan **tanpa root permanen** lewat 
 ## 🌐 Website Resmi & Audit Keamanan
 
 Kunjungi landing page lengkap OverlayOps:
-👉 **[Website OverlayOps (Built in XyVerse)](https://xykalnotkel.github.io/OverlayOps/)**
+👉 **[AppsPerms — appsperms.haekal.web.id](https://appsperms.haekal.web.id/)**  
+*(Domain cadangan: <https://xykalnotkel.github.io/OverlayOps/> — otomatis dialihkan ke domain utama)*
 
 - **Scan Antivirus VirusTotal**: **0/72 Clean (100% Undetected)**
 - **Audit Privasi**: 0 permission internet di `AndroidManifest.xml` (data mustahil keluar dari perangkat).
