@@ -27,12 +27,17 @@ Kunjungi landing page lengkap OverlayOps:
 
 ## ⬇️ Download
 
-| Varian | Link Unduh | Ukuran | Catatan |
-|---|---|---|---|
-| **Release APK (Disarankan)** | **[OverlayOps-1.2.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.2.0/OverlayOps-1.2.0-release.apk)** | **1,90 MB** | Signed Keystore Resmi, R8 Minified, Anti-Lag Engine |
-| Debug APK (Troubleshooting) | [OverlayOps-1.2.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.2.0/OverlayOps-1.2.0-debug.apk) | ~6,0 MB | Logging logcat aktif, unstripped |
-| Tag Releases | [GitHub Releases v1.2.0](https://github.com/xykalnotkel/OverlayOps/releases) | — | Semua rilisan & changelog |
-| Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | Build otomatis multi-runner |
+| Varian | Link Unduh | Ukuran | SHA-256 | Catatan |
+|---|---|---|---|---|
+| **Release APK (Disarankan)** | **[AppsPerms-1.3.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-release.apk)** | **1,87 MB** | `f0439e13…38cac` | Signed keystore resmi, R8 minified |
+| Debug APK (Troubleshooting) | [AppsPerms-1.3.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-debug.apk) | ~5,9 MB | `35d3cf58…d1d74` | Logging logcat aktif, unstripped |
+| Tag Releases | [GitHub Releases](https://github.com/xykalnotkel/OverlayOps/releases) | — | — | Semua rilisan & changelog |
+| Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | — | Build + unit test otomatis |
+
+> ⚠️ **Penting:** sejak v1.3.0 `applicationId` berubah dari `app.overlayops` menjadi `app.appsperms`.
+> Android menganggapnya aplikasi baru — **uninstall versi OverlayOps dulu**, baru pasang AppsPerms
+> dan berikan izin Shizuku sekali lagi. Untuk memindahkan konfigurasi: **Backup konfigurasi** di versi lama
+> → **Restore** di versi baru.
 
 ### 🔐 Fingerprint Sertifikat Resmi
 
@@ -55,19 +60,30 @@ Alasannya:
 
 ---
 
-## 🆕 Yang Baru di v1.2.0
+## 🆕 Yang Baru di v1.3.0
 
-1. **⚡ Optimistic Real-Time UI (0ms Feedback)**:
-   - Saat mengubah status di bottom sheet, label dan warna chip di list langsung berganti dalam 0 milidetik seketika tanpa nunggu background task!
-   - Otomatis rollback mulus jika eksekusi sistem ditolak oleh ROM.
-2. **🚀 Anti-Lag Engine**:
-   - `AppsRepository.loadApps`: Pre-fetch `SYSTEM_ALERT_WINDOW` secara batch sekaligus dalam 1 panggilan IPC (mengeliminasi 350+ query binder individual yang bikin freeze).
-   - `AppListAdapter`: Dukungan **Partial Payload Diffing (`PAYLOAD_STATUS`)**. Saat status op berubah, hanya chip yang di-update tanpa me-render ulang ikon atau layout row.
-3. **✨ Built in XyVerse**:
-   - Subtitle header & dialog Tentang OverlayOps kini menampilkan identitas ekosistem resmi XyVerse.
-4. **🌐 Landing Website & VirusTotal Audit**:
-   - Website unduhan interaktif ala App Ops bertema *Cyber-Obsidian Dark*.
-   - Screenshot audit VirusTotal 0/72 Clean dan panduan verifikasi hash.
+1. **🌐 Dua bahasa: Indonesia & English**
+   - `values-en/strings.xml` baru + seluruh teks dipindah dari kode ke resource, jadi UI benar-benar bisa diterjemahkan.
+   - Pilihan bahasa di menu Pengaturan (Ikuti sistem / Indonesia / English), lengkap dengan `locales_config.xml`
+     sehingga di Android 13+ juga muncul di Pengaturan sistem → Aplikasi → AppsPerms → Bahasa.
+
+2. **☰ Menu baru + layar Pengaturan**
+   - Menu titik tiga tidak lagi daftar panjang: dikelompokkan jadi **Kelola / Diagnostik / Bantuan & info**
+     dengan keterangan per aksi, dan memakai `MenuAction` enum (bukan nomor id) supaya salah peta aksi tidak mungkin.
+   - Pengaturan: bahasa, urutan daftar bawaan, konfirmasi mode berisiko, peringatan UID bersama.
+
+3. **🛡 Peringatan yang mencegah app rusak**
+   - Konfirmasi + penjelasan sebelum menerapkan mode **Diblokir/Diabaikan** ke app yang memang meminta izin overlay.
+   - Deteksi **UID bersama**: AppOps disimpan per-UID, jadi klon/profil kerja ikut berubah — sekarang diberi tahu dulu.
+
+4. **🧪 Unit test + CI lebih rapi**
+   - `core/AppOpsParser.kt` dipisah dari `ShizukuBridge` supaya murni dan bisa diuji JVM.
+   - 20+ unit test: parser `appops` (format antar-ROM), pemetaan status, filter, dan state koneksi.
+   - CI menjalankan unit test sebelum build, artefak dinamai `AppsPerms-*`, dan perubahan `docs/` tidak lagi memicu build APK.
+
+5. **🐛 Perbaikan kecil**
+   - Label Android TalkBack untuk tombol ikon, tinggi baris minimum 44–56 dp.
+   - Nama kelas jadi `AppsPermsApp`, dan semua label UI konsisten memakai nama **AppsPerms**.
 
 ---
 
@@ -89,9 +105,10 @@ Tanpa root, tanpa Magisk, tanpa ADB terus-menerus. Cukup pairing Wireless Debugg
 ## 🚀 Cara Pakai Cepat
 
 1. Install dan jalankan **Shizuku** (via Wireless Debugging atau Root).
-2. Install **OverlayOps Release APK**.
-3. Buka OverlayOps → tekan **Minta izin** → Izinkan selalu.
+2. Install **AppsPerms Release APK**.
+3. Buka AppsPerms → tekan **Minta izin** → Izinkan selalu.
 4. Ketuk app untuk detail 19 AppOps, atau ketuk chip status / tahan lama baris untuk mengubah mode overlay.
+5. Menu titik tiga di kanan atas: aksi massal, backup/restore, laporan perangkat, dan **Pengaturan** (bahasa, konfirmasi mode berisiko).
 
 ---
 

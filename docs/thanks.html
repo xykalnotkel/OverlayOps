@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://appsperms.haekal.web.id/thanks.html">
-  <title>Terima kasih sudah download! — AppsPerms | Built in XyVerse</title>
+  <title>Terima kasih sudah download! — AppsPerms v1.3.0 | Built in XyVerse</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='28' fill='%23171A21' stroke='%232C313B' stroke-width='2'/%3E%3Cpath d='M38,24h32a8,8 0 0 1 8,8v44a8,8 0 0 1 -8,8h-32a8,8 0 0 1 -8,-8v-44a8,8 0 0 1 8,-8z' fill='none' stroke='%23ECEFF4' stroke-width='4'/%3E%3Crect x='46' y='44' width='36' height='26' rx='6' fill='%23FFB020'/%3E%3Crect x='51' y='50' width='22' height='4' rx='2' fill='%231A1206'/%3E%3Crect x='51' y='58' width='14' height='4' rx='2' fill='%231A1206'/%3E%3Cpath d='M48,31h12' stroke='%23ECEFF4' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -438,7 +438,7 @@
           Langkah Pasang (30 detik)
         </h2>
         <ol class="steps">
-          <li><span class="t">Buka <strong>folder Download</strong> di HP kamu, lalu ketuk file <code id="fileText">OverlayOps-1.2.0-release.apk</code>.</span></li>
+          <li><span class="t">Buka <strong>folder Download</strong> di HP kamu, lalu ketuk file <code id="fileText">AppsPerms-1.3.0-release.apk</code>.</span></li>
           <li><span class="t">Kalau muncul peringatan, aktifkan <strong>“Izinkan dari sumber ini”</strong> / <em>Install unknown apps</em> untuk aplikasi File Manager atau browser kamu. Ini normal untuk APK di luar Play Store.</span></li>
           <li><span class="t">Selesaikan instalasi, lalu buka <strong>AppsPerms</strong> di launcher.</span></li>
           <li><span class="t">Jalankan <strong>Shizuku</strong> (Wireless Debugging / root), lalu tekan <strong>Minta izin</strong> di dalam AppsPerms dan pilih <em>“Izinkan selalu”</em>.</span></li>
@@ -448,8 +448,10 @@
 
       <!-- Peringatan signature -->
       <div class="warn-box">
-        <strong>⚠️ Baru pindah dari versi Debug ke Release?</strong><br>
-        Signature build release berbeda dari debug. Uninstall dulu versi debug/lama, baru pasang versi release, lalu berikan izin Shizuku sekali lagi.
+        <strong>⚠️ Sudah pernah pasang versi lama (OverlayOps)?</strong><br>
+        Sejak v1.3.0 nama paketnya berubah (<code>app.overlayops</code> &rarr; <code>app.appsperms</code>), jadi Android menganggapnya
+        aplikasi baru. Uninstall dulu versi lama, baru pasang AppsPerms, lalu berikan izin Shizuku sekali lagi.
+        Kalau mau memindahkan konfigurasi: di versi lama pilih <em>Backup konfigurasi</em>, lalu <em>Restore</em> di versi baru.
       </div>
 
       <!-- Verifikasi -->
@@ -459,7 +461,7 @@
           Verifikasi Keaslian File
         </h2>
         <span class="hash-label">SHA-256 (rata-rata hash dari GitHub &amp; rilis resmi)</span>
-        <code class="hash" id="hashText">3c9fadfdd7dde6317d921762d910d80dffaf5dcdd7c946610f2e390b48b3e43b</code>
+        <code class="hash" id="hashText">f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac</code>
         <div class="pill-row" style="margin-top: 14px;">
           <span class="pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -491,21 +493,21 @@
     (function () {
       var params = new URLSearchParams(window.location.search);
       var variant = params.get('var') === 'debug' ? 'debug' : 'release';
-      var version = params.get('v') || '1.2.0';
+      var version = params.get('v') || '1.3.0';
       var auto = params.get('auto') === '1';
 
       var RELEASE = {
-        file: 'OverlayOps-' + version + '-release.apk',
-        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/OverlayOps-' + version + '-release.apk',
-        hash: '3c9fadfdd7dde6317d921762d910d80dffaf5dcdd7c946610f2e390b48b3e43b',
-        size: '1.82 MB (1.906.280 byte)',
+        file: 'AppsPerms-' + version + '-release.apk',
+        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/AppsPerms-' + version + '-release.apk',
+        hash: 'f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac',
+        size: '1.87 MB (1.956.096 byte)',
         tag: 'Release · Disarankan'
       };
       var DEBUG = {
-        file: 'OverlayOps-' + version + '-debug.apk',
-        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/OverlayOps-' + version + '-debug.apk',
-        hash: 'b31dd98600b7ee7a8639160f6102aa403a6aec7a0c811f6617a45d427be0380c',
-        size: '5.80 MB',
+        file: 'AppsPerms-' + version + '-debug.apk',
+        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/AppsPerms-' + version + '-debug.apk',
+        hash: '35d3cf584e640b5d2e92b1040c4bf00dc07e39d072aac67cdb016c102d1d1d74',
+        size: '5.86 MB',
         tag: 'Debug · Troubleshooting'
       };
       var info = variant === 'debug' ? DEBUG : RELEASE;
