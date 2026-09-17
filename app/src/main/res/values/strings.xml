@@ -226,7 +226,7 @@
     <string name="res_dialog_title">Resolusi &amp; density</string>
     <string name="res_presets">Preset (rasio dipertahankan)</string>
     <string name="res_manual_size">atau ketik manual</string>
-    <string name="res_size_hint">mis. 720x1600</string>
+    <string name="res_size_hint">mis. 1080 atau 720x1600</string>
     <string name="res_auto_density">Sesuaikan DPI otomatis (UI tetap proporsional)</string>
     <string name="res_density_hint">DPI manual, mis. 320</string>
     <string name="res_density_range">Density harus angka %1$d–%2$d</string>
@@ -351,4 +351,14 @@
     <string name="history_clear">Hapus</string>
     <string name="history_cleared">Riwayat dibersihkan</string>
 
+    <string name="about_version">Versi %1$s · build %2$d</string>
+    <string name="about_tagline">Kontrol AppOps Android secara ringan melalui Shizuku — tanpa root, iklan, pelacak, atau koneksi internet.</string>
+    <string name="about_privacy_title">PRIVASI &amp; KEAMANAN</string>
+    <string name="about_privacy_body">✓ Tidak meminta izin internet
+✓ Semua proses berlangsung di perangkat
+✓ Source code terbuka dan APK dipindai VirusTotal
+✓ Perubahan dapat dikembalikan ke bawaan Android</string>
+    <string name="about_website">Website</string>
+    <string name="about_source">Source code</string>
+    <string name="about_credit">Built with care in XyVerse · @xykalnotkel</string>
 </resources>

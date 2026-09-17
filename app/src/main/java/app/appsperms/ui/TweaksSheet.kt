@@ -52,6 +52,11 @@ object TweaksSheet {
         dialog.setContentView(b.root)
 
         val handler = Handler(Looper.getMainLooper())
+        // v1.4.2: dua fitur yang bisa mengganggu sentuhan / me-reload proses dinonaktifkan.
+        AppPrefs.setGuardEnabled(activity, false)
+        GhostGuardService.syncFromSettings(activity)
+        (b.btnKillBg.parent?.parent as? android.view.View)?.isVisible = false
+        (b.guardSwitch.parent?.parent as? android.view.View)?.isVisible = false
         fun alive() = !activity.isFinishing && !activity.isDestroyed
 
         // ------------------------------------------------------------ tampilan
@@ -351,12 +356,14 @@ object TweaksSheet {
                     return@setOnClickListener
                 }
                 val sizeText = rb.resSizeInput.text?.toString().orEmpty()
-                val sizeErr = WmParser.validateSize(sizeText, physical)
+                val landscape = activity.resources.configuration.orientation ==
+                    android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                val sizeErr = WmParser.validateSize(sizeText, physical, landscape)
                 if (sizeErr != null) {
                     rb.resSizeWrap.error = sizeErr
                     return@setOnClickListener
                 }
-                val (w, h) = WmParser.parseSize(sizeText)!!
+                val (w, h) = WmParser.resolveSize(sizeText, physical, landscape)!!
 
                 // Density: manual kalau kolomnya aktif; otomatis dari rasio skala.
                 val autoDensity = rb.resAutoDensity.isChecked

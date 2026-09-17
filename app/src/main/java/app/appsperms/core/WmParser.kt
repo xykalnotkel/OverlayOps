@@ -59,11 +59,21 @@ object WmParser {
         return w to h
     }
 
-    /** Validasi ukuran baru: harus WxH, dua sisi >= MIN_DIMENSION, tidak lebih besar 2x fisik. */
-    fun validateSize(text: String, physical: Pair<Int, Int>?): String? {
-        val parsed = parseSize(text) ?: return "Format harus WXH, contoh 720x1600"
+    /** Satu angka dianggap sisi pendek; sisi lain dihitung dari rasio layar fisik. */
+    fun resolveSize(text: String, physical: Pair<Int, Int>?, landscape: Boolean = false): Pair<Int, Int>? {
+        parseSize(text)?.let { return it }
+        val short = text.trim().toIntOrNull()?.takeIf { it >= MIN_DIMENSION } ?: return null
+        val (pw, ph) = physical ?: return null
+        val ratio = maxOf(pw, ph).toDouble() / minOf(pw, ph)
+        val long = evenDown((short * ratio).toInt()).coerceAtLeast(MIN_DIMENSION)
+        return if (landscape) long to short else short to long
+    }
+
+    /** Validasi ukuran baru, termasuk input satu angka yang sudah di-resolve UI. */
+    fun validateSize(text: String, physical: Pair<Int, Int>?, landscape: Boolean = false): String? {
+        val parsed = resolveSize(text, physical, landscape)
+            ?: return "Ketik satu sisi (contoh 1080) atau WXH (contoh 1080x2400)"
         val (w, h) = parsed
-        if (w > h) return "Gunakan posisi portrait — tinggi harus lebih besar (contoh 720x1600)."
         physical?.let { (pw, ph) ->
             if (w > pw * 2 || h > ph * 2) return "Terlalu besar — maksimal 2x resolusi fisik (${pw}x$ph)."
         }

@@ -226,7 +226,7 @@
     <string name="res_dialog_title">Resolution &amp; density</string>
     <string name="res_presets">Presets (aspect ratio kept)</string>
     <string name="res_manual_size">or type your own</string>
-    <string name="res_size_hint">e.g. 720x1600</string>
+    <string name="res_size_hint">e.g. 1080 or 720x1600</string>
     <string name="res_auto_density">Adjust DPI automatically (UI stays proportional)</string>
     <string name="res_density_hint">Manual DPI, e.g. 320</string>
     <string name="res_density_range">Density must be a number between %1$d and %2$d</string>
@@ -351,4 +351,14 @@
     <string name="history_clear">Clear</string>
     <string name="history_cleared">History cleared</string>
 
+    <string name="about_version">Version %1$s · build %2$d</string>
+    <string name="about_tagline">Lightweight Android AppOps control through Shizuku — without root, ads, trackers, or an internet connection.</string>
+    <string name="about_privacy_title">PRIVACY &amp; SECURITY</string>
+    <string name="about_privacy_body">✓ No internet permission
+✓ Everything stays on device
+✓ Open source and VirusTotal-scanned APK
+✓ Changes can be restored to Android defaults</string>
+    <string name="about_website">Website</string>
+    <string name="about_source">Source code</string>
+    <string name="about_credit">Built with care in XyVerse · @xykalnotkel</string>
 </resources>

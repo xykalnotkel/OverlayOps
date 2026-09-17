@@ -591,13 +591,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun showAbout() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.about_title)
-            .setMessage(getString(R.string.about_body))
-            .setPositiveButton(R.string.dialog_close, null)
-            .show()
-    }
+    private fun showAbout() = AboutSheet.show(this)
 
     // ---------------------------------------------------------------- detail
 

@@ -96,4 +96,12 @@ class WmParserTest {
         assertNotNull(WmParser.validateDensity("999"))
         assertNotNull(WmParser.validateDensity("abc"))
     }
+
+    @org.junit.Test fun `single dimension keeps physical ratio portrait`() {
+        assertEquals(1080 to 2400, WmParser.resolveSize("1080", 1080 to 2400))
+    }
+
+    @org.junit.Test fun `single dimension follows landscape orientation`() {
+        assertEquals(2400 to 1080, WmParser.resolveSize("1080", 1080 to 2400, landscape = true))
+    }
 }
