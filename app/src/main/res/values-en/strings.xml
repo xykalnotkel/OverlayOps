@@ -204,8 +204,151 @@
     <string name="settings_sort">List order on open</string>
     <string name="settings_footer">Version %1$s (%2$d) · no ads · no internet permission</string>
 
+    <!-- ================= v1.4 Tweaks ================= -->
+    <string name="menu_tweaks">Performance &amp; display tweaks</string>
+    <string name="menu_tweaks_sub">Resolution/DPI, animations, cleaners, ghost-touch guard</string>
+    <string name="tweaks_title">Tweaks</string>
+    <string name="tweaks_subtitle">Change resolution &amp; DPI, speed up animations, free up RAM — via the Shizuku shell, no root</string>
+    <string name="tweaks_footer">Every change is live and reversible. If your ROM refuses a command (MIUI/ColorOS sometimes block `wm`), open the menu → Device report to see the original error.</string>
+
+    <string name="tweaks_display">Resolution &amp; DPI</string>
+    <string name="tweaks_display_note">Lowering resolution makes the GPU work less (often smoother and cooler on weak phones) but text gets less sharp. A 15-second auto-revert protects you unless you tap \"Keep\".</string>
+    <string name="tweaks_size_change">Change…</string>
+    <string name="tweaks_reset">Reset</string>
+    <string name="tweaks_reset_done">Resolution &amp; DPI restored to default ✓</string>
+    <string name="tweaks_need_shizuku">Connect Shizuku first — tweaks need the shell bridge.</string>
+    <string name="tweaks_read_fail">Failed to read `wm`: %1$s</string>
+    <string name="tweaks_apply_fail">ROM refused the command: %1$s</string>
+    <string name="tweaks_display_unread">Cannot read the display configuration</string>
+    <string name="tweaks_display_physical">Default: %1$s</string>
+    <string name="tweaks_display_override">Override %1$s (physical %2$s)</string>
+
+    <string name="res_dialog_title">Resolution &amp; density</string>
+    <string name="res_presets">Presets (aspect ratio kept)</string>
+    <string name="res_manual_size">or type your own</string>
+    <string name="res_size_hint">e.g. 720x1600</string>
+    <string name="res_auto_density">Adjust DPI automatically (UI stays proportional)</string>
+    <string name="res_density_hint">Manual DPI, e.g. 320</string>
+    <string name="res_density_range">Density must be a number between %1$d and %2$d</string>
+    <string name="res_warning">⚠ On some ROMs (MIUI/HyperOS) you must first enable Developer options → \"USB debugging (Security settings)\", otherwise wm commands are rejected. A wrong value is not dangerous: auto-revert puts everything back.</string>
+    <string name="res_confirm_title">Keep the new display?</string>
+    <string name="res_confirm_body">The screen reverts automatically in %1$d seconds unless you choose \"Keep\" — so you can never get locked out. If the buttons are off-screen, long-press anywhere for 1.5 s.</string>
+    <string name="res_confirm_hint">A display confirmation is still running — open Tweaks again to Keep/Revert.</string>
+    <string name="res_keep">Keep</string>
+    <string name="res_revert">Revert</string>
+    <string name="res_kept">New resolution kept ✓</string>
+    <string name="res_reverted">Back to the default resolution ✓</string>
+    <string name="res_autoreverted">Not confirmed — reverted to default automatically</string>
+
+    <string name="tweaks_anim">Animations</string>
+    <string name="tweaks_anim_note">Turning window/transition animations off makes the phone feel far snappier. Same as the three sliders in Developer options.</string>
+    <string name="tweaks_anim_off">0× off</string>
+    <string name="tweaks_anim_half">0.5×</string>
+    <string name="tweaks_anim_full">1× default</string>
+    <string name="tweaks_anim_current">Current scale: %1$s</string>
+    <string name="tweaks_anim_unknown">unreadable</string>
+    <string name="tweaks_anim_set">Animation scale set to %1$s ✓</string>
+
+    <string name="tweaks_boost">Instant boost</string>
+    <string name="tweaks_kill_bg">Kill background</string>
+    <string name="tweaks_trim_cache">Trim caches</string>
+    <string name="tweaks_boost_note">\"Kill\" only removes CACHED processes (foreground apps, music and downloads are safe). \"Trim caches\" uses the official system mechanism with a 750 MB free-space target.</string>
+    <string name="tweaks_kill_done">Background processes cleared ✓</string>
+    <string name="tweaks_trim_done">Caches trimmed ✓</string>
+    <string name="tweaks_busy">Working…</string>
+
+    <string name="guard_title">Ghost-touch guard</string>
+    <string name="guard_switch">Enable guard</string>
+    <string name="guard_switch_desc">Draw invisible bands on screen edges that swallow ghost touches. Long-press a band for 1.5 s to open AppsPerms again.</string>
+    <string name="guard_perm_missing">AppsPerms needs the overlay AppOp for itself before bands can be drawn.</string>
+    <string name="guard_perm_no_shizuku">Connect Shizuku first — or allow AppsPerms to display over other apps in system Settings.</string>
+    <string name="guard_grant">Grant via Shizuku</string>
+    <string name="guard_grant_ok">AppsPerms overlay op allowed ✓</string>
+    <string name="guard_grant_restart">Op set, but not visible to the system yet — restart AppsPerms once.</string>
+    <string name="guard_sides">Protected sides</string>
+    <string name="guard_side_top">Top</string>
+    <string name="guard_side_bottom">Bottom</string>
+    <string name="guard_side_left">Left</string>
+    <string name="guard_side_right">Right</string>
+    <string name="guard_thickness">Band thickness</string>
+    <string name="guard_thickness_value">%1$d dp</string>
+    <string name="guard_test">Test mode (bands visible)</string>
+    <string name="guard_note">Note: ghost touches from hardware (broken digitizer / leaking charger) are only muted, not cured — trying another charger is the real fix. The status-bar area itself always belongs to the system.</string>
+    <string name="guard_no_band">Pick at least one side first.</string>
+    <string name="guard_too_thick">⚠ Bands would cover %1$d%% of the screen — your phone will feel very hard to use.</string>
+    <string name="guard_channel">Ghost-touch guard</string>
+    <string name="guard_notif_title">Ghost-touch guard active</string>
+    <string name="guard_notif_active">%1$d bands · %2$d dp · test: %3$s</string>
+    <string name="guard_notif_paused">Paused — re-arming in %1$d s</string>
+    <string name="guard_notif_pause">Pause 60 s</string>
+    <string name="guard_notif_stop">Turn off</string>
+    <string name="guard_test_on">ON</string>
+    <string name="guard_test_off">OFF</string>
+    <string name="guard_started">Guard active ✓</string>
+    <string name="guard_stopped">Guard stopped</string>
+    <string name="guard_start_fail">Guard failed to start: %1$s</string>
+
     <!-- report & about -->
     <string name="device_report">Device report</string>
     <string name="about_title">About AppsPerms</string>
     <string name="about_body">AppsPerms — a lightweight AppOps manager focused on SYSTEM_ALERT_WINDOW (Display over other apps) plus 18 related ops (camera, microphone, clipboard, location, and more).\n\nBuilt in XyVerse (@xykalnotkel)\n\nHow it works: reads and writes directly through Shizuku without permanent root. Super responsive, 100% transparent, no ads, and no internet permission (data can never leave the device).</string>
+
+
+    <!-- groups -->
+    <string name="opgroup_overlay">Overlays &amp; windows</string>
+    <string name="opgroup_privacy">Privacy</string>
+    <string name="opgroup_media">Camera &amp; microphone</string>
+    <string name="opgroup_background">Background &amp; system</string>
+    <string name="op_overlay_title">Display over other apps</string>
+    <string name="op_overlay_desc">Allows drawing windows above other apps (overlay). Without it, bubbles, floating buttons and anti-overlay screens in banking apps often fail.</string>
+    <string name="op_toast_title">Show toasts</string>
+    <string name="op_toast_desc">Displays system toast messages above other apps.</string>
+    <string name="op_pip_title">Picture-in-picture</string>
+    <string name="op_pip_desc">Shows floating video windows.</string>
+    <string name="op_cast_title">Media projection (cast)</string>
+    <string name="op_cast_desc">Projects media to other devices.</string>
+    <string name="op_clipboard_title">Read clipboard</string>
+    <string name="op_clipboard_desc">Reads clipboard contents silently.</string>
+    <string name="op_contacts_title">Read contacts</string>
+    <string name="op_contacts_desc">Accesses the contacts list.</string>
+    <string name="op_calendar_title">Read calendar</string>
+    <string name="op_calendar_desc">Accesses calendar data.</string>
+    <string name="op_location_fine_title">Precise location</string>
+    <string name="op_location_fine_desc">Accesses high-accuracy GPS.</string>
+    <string name="op_location_coarse_title">Approximate location</string>
+    <string name="op_location_coarse_desc">Accesses approximate location.</string>
+    <string name="op_mock_location_title">Fake location</string>
+    <string name="op_mock_location_desc">Spoofs the device location (mock location).</string>
+    <string name="op_camera_title">Camera</string>
+    <string name="op_camera_desc">Opens the camera behind the scenes.</string>
+    <string name="op_mic_title">Microphone</string>
+    <string name="op_mic_desc">Records audio.</string>
+    <string name="op_write_settings_title">Modify system settings</string>
+    <string name="op_write_settings_desc">Changes system settings without the normal permission flow.</string>
+    <string name="op_usage_stats_title">App usage statistics</string>
+    <string name="op_usage_stats_desc">Reads app usage data (UsageStats).</string>
+    <string name="op_install_apk_title">Request APK install</string>
+    <string name="op_install_apk_desc">Requests installing packages from outside the store.</string>
+    <string name="op_delete_pkg_title">Request package deletion</string>
+    <string name="op_delete_pkg_desc">Requests removing other applications.</string>
+    <string name="op_wakelock_title">Wakelock</string>
+    <string name="op_wakelock_desc">Keeps the device awake.</string>
+    <string name="op_vibrate_title">Vibration</string>
+    <string name="op_vibrate_desc">Accesses device vibration.</string>
+    <string name="op_background_run_title">Run in background</string>
+    <string name="op_background_run_desc">Allowed to run in the background.</string>
+
+    <!-- history & undo -->
+    <string name="menu_history">History &amp; mass undo</string>
+    <string name="menu_history_sub">Everything AppsPerms changed — revert to the original state</string>
+    <string name="history_title">Change history</string>
+    <string name="history_subtitle">%1$d entries · undo restores each app &amp; op to its first recorded state</string>
+    <string name="history_empty">No changes recorded yet — every AppOps write made through this app is logged here.</string>
+    <string name="history_undo_all">Undo all (%1$d)</string>
+    <string name="history_undoing">Undoing…</string>
+    <string name="history_undo_done">%1$d reverted · %2$d skipped (missing or already in place)</string>
+    <string name="history_copy">Copy</string>
+    <string name="history_clear">Clear</string>
+    <string name="history_cleared">History cleared</string>
+
 </resources>

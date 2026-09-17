@@ -28,6 +28,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # fetch penuh: step VT perlu commit docs & push balik ke main
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -145,7 +148,121 @@ jobs:
             echo "versionName: \`$VERSION\` · commit: \`$GITHUB_SHA\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
+          # Catatan rilis (dipakai step Release + di-append step VirusTotal)
+          {
+            echo "APK **AppsPerms** — pengelola AppOps + Tuning via Shizuku."
+            echo
+            echo "- \`AppsPerms-$VERSION-release.apk\` → signed keystore resmi, di-minify (R8), **disarankan**"
+            echo "- \`AppsPerms-$VERSION-debug.apk\` → buat troubleshooting"
+            echo
+            echo "| berkas | ukuran | sha256 |"
+            echo "|---|---|---|"
+            for f in out/*.apk; do
+              printf '| `%s` | %s | `%s` |\n' "$(basename \"$f\")" "$(du -h \"$f\" | cut -f1)" "$(sha256sum \"$f\" | cut -d' ' -f1)"
+            done
+            echo
+            echo "> ⚠️ **Mulai v1.3.0 nama paketnya berubah** (\`app.overlayops\` → \`app.appsperms\`). Uninstall versi lama dulu."
+            echo
+            echo "Situs: https://appsperms.haekal.web.id/ · data scan: \`docs/data/virustotal.json\`"
+          } > out/release-notes.md
+
           ls -lh out
+
+      - name: Scan VirusTotal & perbarui data situs (hanya rilis bertag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}
+        run: |
+          set -uo pipefail
+          VERSION=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+          REL_APK="out/AppsPerms-$VERSION-release.apk"
+          DBG_APK="out/AppsPerms-$VERSION-debug.apk"
+          REL_SHA=$(sha256sum "$REL_APK" | cut -d' ' -f1)
+          DBG_SHA=$(sha256sum "$DBG_APK" | cut -d' ' -f1)
+          REL_MB=$(python3 -c "import os;print(round(os.path.getsize('$REL_APK')/1048576,2))")
+          DBG_MB=$(python3 -c "import os;print(round(os.path.getsize('$DBG_APK')/1048576,2))")
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          V3=https://www.virustotal.com/api/v3
+          PERMA="https://www.virustotal.com/gui/file/$REL_SHA"
+          CHECKED=false; DET=0; TOT=0
+
+          if [ -z "${VT_API_KEY:-}" ]; then
+            echo "::warning::Secret VT_API_KEY belum diset — scan VirusTotal dilewati; hash & ukuran tetap diperbarui."
+          else
+            H="X-Api-Key: $VT_API_KEY"
+            J=$(curl -s -H "$H" "$V3/files/$REL_SHA" || true)
+            AID=""
+            if jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
+              echo "file sudah dikenal VirusTotal (hash sama) — pakai hasil terakhir"
+            else
+              RESP=$(curl -s -H "$H" "$V3/files/$REL_SHA/upload-url" || true)
+              UPID=$(jq -r '.data.id // empty' <<<"$RESP")
+              UPURL=$(jq -r '.data.upload_url // empty' <<<"$RESP")
+              if [ -n "$UPURL" ]; then
+                curl -s -H "$H" -T "$REL_APK" "$UPURL" >/dev/null
+                POST=$(curl -s -H "$H" -H 'Content-Type: application/json' -X POST "$V3/files/upload" -d "{\"data\":{\"id\":\"$UPID\"}}")
+                AID=$(jq -r '.data.links.self // empty' <<<"$POST"); AID=${AID##*/}
+              else
+                echo "upload-url kosong (mungkin antrian penuh) — coba lagi di rilis berikutnya"; AID=""
+              fi
+            fi
+            if [ -n "$AID" ]; then
+              for i in $(seq 1 20); do
+                ST=$(curl -s -H "$H" "$V3/analyses/$AID" | jq -r '.data.attributes.status // "?"')
+                echo "analisis $AID: $ST ($i/20)"
+                [ "$ST" = "completed" ] && break
+                sleep 15
+              done
+            fi
+            J=$(curl -s -H "$H" "$V3/files/$REL_SHA" || true)
+            if jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
+              DET=$(jq -r '[(.data.attributes.last_analysis_stats.malicious // 0), (.data.attributes.last_analysis_stats.suspicious // 0)] | add' <<<"$J")
+              TOT=$(jq -r '.data.attributes.last_analysis_stats | to_entries | map(.value) | add // 0' <<<"$J")
+              CHECKED=true
+            fi
+          fi
+
+          # 1) data live untuk website (index.html & thanks.html membaca file ini)
+          jq -n --arg v "$VERSION" --arg now "$NOW" \
+             --arg rfile "AppsPerms-$VERSION-release.apk" --arg dfile "AppsPerms-$VERSION-debug.apk" \
+             --arg rsha "$REL_SHA" --arg dsha "$DBG_SHA" --argjson rmb "$REL_MB" --argjson dmb "$DBG_MB" \
+             --argjson checked "$CHECKED" --argjson det "$DET" --argjson tot "$TOT" --arg perma "$PERMA" \
+             '{updated_utc:$now, version:$v, generated_by:"GitHub Actions build.yml (otomatis tiap tag v*)",
+               release:{file:$rfile, sha256:$rsha, size_mb:$rmb},
+               debug:{file:$dfile, sha256:$dsha, size_mb:$dmb},
+               virustotal:{checked:$checked, detected:$det, total:$tot, permalink:$perma, checked_utc:$now}}' \
+             > docs/data/virustotal.json
+          cp docs/data/virustotal.json out/virustotal.json
+
+          # 2) kartu hasil scan (PNG) — pengganti screenshot manual yang selalu ketinggalan
+          if python3 -c "import PIL" 2>/dev/null || pip install --quiet pillow; then
+            python3 docs/tools/make-vt-card.py --data docs/data/virustotal.json --out docs/images/virustotal-report.png \
+              && cp docs/images/virustotal-report.png out/virustotal-report.png
+          fi
+
+          # 3) laporan ke catatan rilis
+          {
+            echo
+            echo "### 🔐 Audit VirusTotal (scan otomatis CI)"
+            if [ "$CHECKED" = "true" ]; then
+              echo "- Hasil rilis ini: **$DET / $TOT**$( [ "$DET" -eq 0 ] && echo ' — CLEAN ✅')"
+              echo "- Detail: $PERMA"
+            else
+              echo "- Scan otomatis **dilewati** (secret \`VT_API_KEY\` belum diset). Scan manual: $PERMA"
+            fi
+            echo "- SHA-256 release APK: \`$REL_SHA\`"
+          } >> out/release-notes.md
+
+          # 4) push balik data + kartu ke main (perubahan docs/ TIDAK memicu build APK — lihat paths-ignore)
+          if [ "$CHECKED" = "true" ]; then
+            git add docs/data/virustotal.json docs/images/virustotal-report.png
+            if ! git diff --cached --quiet; then
+              git -c user.name="AppsPerms CI" -c user.email="appsperms-ci@xykalnotkel.local" \
+                  commit -q -m "docs: hasil scan VirusTotal & hash v$VERSION (otomatis CI)"
+              git push "https://github.com/$GITHUB_REPOSITORY" HEAD:refs/heads/main \
+                || echo "::warning::push docs gagal (main sudah bergeser?) — file tetap ada di artefak build."
+            fi
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -159,18 +276,11 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: out/*.apk
+          files: |
+            out/*.apk
+            out/virustotal-report.png
+            out/virustotal.json
           generate_release_notes: true
-          body: |
-            APK **AppsPerms** — pengelola AppOps (Display over other apps) via Shizuku.
-
-            - `AppsPerms-*-release.apk` → signed keystore resmi, di-minify (R8), **disarankan**
-            - `AppsPerms-*-debug.apk` → buat troubleshooting
-
-            > ⚠️ **Mulai v1.3.0 nama paketnya berubah** (`app.overlayops` → `app.appsperms`).
-            > Android menganggapnya aplikasi baru, jadi **uninstall versi lama (OverlayOps) dulu**,
-            > baru pasang AppsPerms dan berikan izin Shizuku sekali lagi.
-
-            Situs resmi: https://appsperms.haekal.web.id/
+          body_path: out/release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

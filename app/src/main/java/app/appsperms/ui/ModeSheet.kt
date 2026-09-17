@@ -31,7 +31,7 @@ object ModeSheet {
         val dialog = BottomSheetDialog(context)
         val b = SheetModeBinding.inflate(LayoutInflater.from(context))
 
-        b.sheetTitle.text = def.title
+        b.sheetTitle.setText(def.titleRes)
         b.sheetSub.text = "${entry.label} · ${entry.packageName}"
         b.sheetCurrent.text = context.getString(
             R.string.sheet_current,

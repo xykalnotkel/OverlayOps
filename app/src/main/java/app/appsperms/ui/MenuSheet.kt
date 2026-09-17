@@ -16,8 +16,10 @@ enum class MenuAction {
     REFRESH,
     SORT,
     BATCH,
+    TWEAKS,
     BACKUP,
     RESTORE,
+    HISTORY,
     REPORT,
     COPY_REPORT,
     SHIZUKU,
@@ -60,11 +62,13 @@ object MenuSheet {
         row(kelola, context.getString(R.string.menu_refresh), context.getString(R.string.menu_refresh_sub), MenuAction.REFRESH)
         row(null, context.getString(R.string.menu_sort), context.getString(R.string.menu_sort_sub, sortLabel), MenuAction.SORT)
         row(null, context.getString(R.string.menu_batch), context.getString(R.string.menu_batch_sub), MenuAction.BATCH)
+        row(null, context.getString(R.string.menu_tweaks), context.getString(R.string.menu_tweaks_sub), MenuAction.TWEAKS)
         row(null, context.getString(R.string.menu_backup), context.getString(R.string.menu_backup_sub), MenuAction.BACKUP)
         row(null, context.getString(R.string.menu_restore), context.getString(R.string.menu_restore_sub), MenuAction.RESTORE)
 
         val diagnostik = context.getString(R.string.menu_group_diag)
-        row(diagnostik, context.getString(R.string.menu_report), context.getString(R.string.menu_report_sub), MenuAction.REPORT)
+        row(diagnostik, context.getString(R.string.menu_history), context.getString(R.string.menu_history_sub), MenuAction.HISTORY)
+        row(null, context.getString(R.string.menu_report), context.getString(R.string.menu_report_sub), MenuAction.REPORT)
         row(null, context.getString(R.string.menu_copy_report), context.getString(R.string.menu_copy_report_sub), MenuAction.COPY_REPORT)
 
         val bantuan = context.getString(R.string.menu_group_help)

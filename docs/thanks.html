@@ -7,7 +7,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://appsperms.haekal.web.id/thanks.html">
-  <title>Terima kasih sudah download! — AppsPerms v1.3.0 | Built in XyVerse</title>
+  <title>Terima kasih sudah download! — AppsPerms v1.4.0 | Built in XyVerse</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='28' fill='%23171A21' stroke='%232C313B' stroke-width='2'/%3E%3Cpath d='M38,24h32a8,8 0 0 1 8,8v44a8,8 0 0 1 -8,8h-32a8,8 0 0 1 -8,-8v-44a8,8 0 0 1 8,-8z' fill='none' stroke='%23ECEFF4' stroke-width='4'/%3E%3Crect x='46' y='44' width='36' height='26' rx='6' fill='%23FFB020'/%3E%3Crect x='51' y='50' width='22' height='4' rx='2' fill='%231A1206'/%3E%3Crect x='51' y='58' width='14' height='4' rx='2' fill='%231A1206'/%3E%3Cpath d='M48,31h12' stroke='%23ECEFF4' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -402,32 +402,33 @@
       <div class="hero-text">
         <h1>Terima kasih sudah <span class="grad">download</span>! 🎉</h1>
         <p>
-          Kamu baru saja mengunduh <strong>AppsPerms <span id="verText">v1.2.0</span></strong> —
-          pengelola AppOps &amp; izin sistem Android. Tanpa iklan, tanpa pelacak, tanpa izin internet.
+          File <strong>AppsPerms <span id="verText">v1.4.0</span></strong> sedang diunduh browser-mu —
+          pengelola AppOps, izin sistem Android &amp; Tuning (resolusi, perisai ghost-touch). Tanpa iklan, tanpa pelacak, tanpa izin internet.
         </p>
       </div>
 
       <!-- Status unduhan -->
       <div class="dl-card">
-        <div class="spinner" id="dlSpinner" aria-hidden="true"></div>
+        <div class="spinner done" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin:5px;"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
         <div class="dl-body dl-meta">
           <div class="dl-head">
-            <span class="title" id="dlTitle">Menyiapkan unduhan…</span>
+            <span class="title">Unduhan dimulai ✓</span>
             <span class="variant-tag" id="varTag">Release</span>
           </div>
-          <div class="sub" id="dlSub">File akan tersimpan di folder <strong>Download</strong> HP kamu.</div>
-          <div class="bar" id="dlBar"><span></span></div>
+          <div class="sub">File akan tersimpan di folder <strong>Download</strong> HP kamu. Kalau browser menanyakan konfirmasi unduhan multi-file, tekan <em>Allow</em>.</div>
         </div>
       </div>
 
       <div class="btn-row">
-        <a id="retryBtn" class="btn btn-primary" href="https://github.com/xykalnotkel/OverlayOps/releases/download/v1.2.0/OverlayOps-1.2.0-release.apk">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span id="retryLabel">Unduh ulang APK</span>
-        </a>
         <a class="btn btn-ghost" href="index.html#panduan">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           Cara Pasang &amp; Pakai
+        </a>
+        <a class="btn btn-ghost" href="index.html#keamanan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Lihat Audit VirusTotal
         </a>
       </div>
 
@@ -438,7 +439,7 @@
           Langkah Pasang (30 detik)
         </h2>
         <ol class="steps">
-          <li><span class="t">Buka <strong>folder Download</strong> di HP kamu, lalu ketuk file <code id="fileText">AppsPerms-1.3.0-release.apk</code>.</span></li>
+          <li><span class="t">Buka <strong>folder Download</strong> di HP kamu, lalu ketuk file <code id="fileText">AppsPerms-1.4.0-release.apk</code>.</span></li>
           <li><span class="t">Kalau muncul peringatan, aktifkan <strong>“Izinkan dari sumber ini”</strong> / <em>Install unknown apps</em> untuk aplikasi File Manager atau browser kamu. Ini normal untuk APK di luar Play Store.</span></li>
           <li><span class="t">Selesaikan instalasi, lalu buka <strong>AppsPerms</strong> di launcher.</span></li>
           <li><span class="t">Jalankan <strong>Shizuku</strong> (Wireless Debugging / root), lalu tekan <strong>Minta izin</strong> di dalam AppsPerms dan pilih <em>“Izinkan selalu”</em>.</span></li>
@@ -460,12 +461,12 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Verifikasi Keaslian File
         </h2>
-        <span class="hash-label">SHA-256 (rata-rata hash dari GitHub &amp; rilis resmi)</span>
+        <span class="hash-label">SHA-256 rilis resmi (disinkron otomatis dari data/virustotal.json)</span>
         <code class="hash" id="hashText">f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac</code>
         <div class="pill-row" style="margin-top: 14px;">
           <span class="pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            0/72 Clean VirusTotal
+            <span id="vtThanksPill">0/72 Clean VirusTotal</span>
           </span>
           <span class="pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -491,81 +492,28 @@
 
   <script>
     (function () {
+      // v1.4: halaman ini TIDAK memicu unduhan sama sekali — file sudah diunduh
+      // dari beranda. Di sini hanya info versi/varian + hash live dari CI.
       var params = new URLSearchParams(window.location.search);
       var variant = params.get('var') === 'debug' ? 'debug' : 'release';
-      var version = params.get('v') || '1.3.0';
-      var auto = params.get('auto') === '1';
-
-      var RELEASE = {
-        file: 'AppsPerms-' + version + '-release.apk',
-        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/AppsPerms-' + version + '-release.apk',
-        hash: 'f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac',
-        size: '1.87 MB (1.956.096 byte)',
-        tag: 'Release · Disarankan'
-      };
-      var DEBUG = {
-        file: 'AppsPerms-' + version + '-debug.apk',
-        url: 'https://github.com/xykalnotkel/OverlayOps/releases/download/v' + version + '/AppsPerms-' + version + '-debug.apk',
-        hash: '35d3cf584e640b5d2e92b1040c4bf00dc07e39d072aac67cdb016c102d1d1d74',
-        size: '5.86 MB',
-        tag: 'Debug · Troubleshooting'
-      };
-      var info = variant === 'debug' ? DEBUG : RELEASE;
-
-      // Isi metadata sesuai varian
+      var version = params.get('v') || '1.4.0';
+      document.getElementById('varTag').textContent = variant === 'debug' ? 'Debug · Troubleshooting' : 'Release · Disarankan';
+      document.getElementById('fileText').textContent = 'AppsPerms-' + version + '-' + variant + '.apk';
       document.getElementById('verText').textContent = 'v' + version;
-      document.getElementById('varTag').textContent = info.tag;
-      document.getElementById('fileText').textContent = info.file;
-      document.getElementById('hashText').textContent = info.hash;
-      document.getElementById('retryBtn').setAttribute('href', info.url);
-      document.getElementById('retryLabel').textContent = 'Unduh ulang ' + (variant === 'debug' ? 'Debug APK' : 'APK');
       document.title = 'Terima kasih sudah download! — AppsPerms v' + version;
 
-      /* ===== Pemicu unduhan ===== */
-      var spinner = document.getElementById('dlSpinner');
-      var spinnerIsDone = false;
-
-      function markStarted(text, sub) {
-        // kalau tab sudah tidak aktif (unduhan sudah jalan), tampilkan status selesai
-        var hidden = document.hidden;
-        spinner.classList.add('done');
-        document.getElementById('dlBar').classList.add('stop');
-        document.getElementById('dlTitle').textContent = text || (hidden ? 'Unduhan sedang berjalan ✓' : 'Unduhan sudah dimulai ✓');
-        document.getElementById('dlSub').innerHTML = sub || ('Ukuran ' + info.size + ' — cek notifikasi browser / folder <strong>Download</strong>.');
-      }
-
-      function startDownload() {
-        try {
-          var frame = document.createElement('iframe');
-          frame.style.cssText = 'display:none;width:0;height:0;border:0';
-          frame.setAttribute('aria-hidden', 'true');
-          frame.setAttribute('title', 'Unduhan APK');
-          frame.src = info.url;
-          document.body.appendChild(frame);
-          // bersihkan kalau sudah tidak dipakai
-          setTimeout(function () { try { frame.remove(); } catch (e) {} }, 20000);
-          return true;
-        } catch (e) {
-          return false;
+      fetch('data/virustotal.json', { cache: 'no-store' }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (d) {
+        if (!d) return;
+        var info = (variant === 'debug' && d.debug && d.debug.sha256) ? d.debug : d.release;
+        if (info && info.sha256) document.getElementById('hashText').textContent = info.sha256;
+        var vt = d.virustotal || {};
+        if (vt.checked) {
+          var pill = document.getElementById('vtThanksPill');
+          if (pill) pill.textContent = vt.detected + '/' + vt.total + ' Clean di VirusTotal';
         }
-      }
-
-      if (auto) {
-        // Unduhan sudah dipicu dari halaman utama — cukup tampilkan konfirmasi.
-        setTimeout(function () { markStarted(); }, 400);
-      } else {
-        // Dibuka langsung (link dibagikan / refresh) → picu unduhan di sini.
-        var ok = startDownload();
-        setTimeout(function () {
-          markStarted(ok ? undefined : 'Unduhan tidak bisa dipicu otomatis',
-            ok ? undefined : 'Tekan tombol <strong>Unduh ulang APK</strong> di bawah untuk mengunduh manual.');
-        }, 1200);
-      }
-
-      // Kalau tab ditinggalkan (browser pindah ke unduhan), pastikan status tetap benar.
-      document.addEventListener('visibilitychange', function () {
-        if (document.hidden && !spinnerIsDone) markStarted();
-      });
+      }).catch(function () {});
     })();
   </script>
 

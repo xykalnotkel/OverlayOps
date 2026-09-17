@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import app.appsperms.R
 import app.appsperms.core.AccessSnapshot
 import app.appsperms.core.AppTypeFilter
+import app.appsperms.core.HistoryCodec
+import app.appsperms.core.HistoryLine
+import app.appsperms.core.HistoryStore
 import app.appsperms.core.OpCatalog
 import app.appsperms.core.OpDef
 import app.appsperms.core.OpStatus
@@ -44,6 +47,7 @@ data class UiState(
 class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private val repo = AppsRepository(app)
+    private val history = HistoryStore(app)
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
@@ -93,15 +97,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    /** Ubah mode satu op. Optimistic UI update: langsung ubah status di UI seketika tanpa jeda. */
+    /**
+     * Ubah mode satu op. Optimistic UI update: langsung ubah status di UI seketika tanpa jeda.
+     * [fromStatus] = status op yang sebenarnya SEBELUM ditulis (diisi dari UI yang
+     * membacanya langsung, bukan asumsi) supaya riwayat/undo akurat untuk op non-overlay.
+     */
     fun applyStatus(
         entry: AppEntry,
         def: OpDef,
         status: OpStatus,
+        fromStatus: OpStatus? = null,
         onDone: (error: String?, previous: OpStatus) -> Unit,
     ) {
         val previous = entry.overlayStatus
-        if (previous == status) {
+        if (def.op == OpCatalog.OVERLAY.op && previous == status) {
             onDone(null, previous)
             return
         }
@@ -120,8 +129,58 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             if (error != null && def.op == OpCatalog.OVERLAY.op) {
                 // Eksekusi gagal -> rollback ke status semula
                 patchEntry(entry.packageName) { it.copy(overlayStatus = previous) }
+            } else if (error == null) {
+                recordHistory(entry.packageName, def.op, fromStatus ?: previous, status)
             }
             onDone(error, previous)
+        }
+    }
+
+    // --------------------------------------------------------------- riwayat
+
+    private fun recordHistory(pkg: String, op: String, from: OpStatus, to: OpStatus) {
+        if (from == to) return
+        viewModelScope.launch(Dispatchers.IO) {
+            history.append(HistoryLine(System.currentTimeMillis(), pkg, op, from, to))
+        }
+    }
+
+    fun historyLines(onDone: (List<HistoryLine>) -> Unit) {
+        viewModelScope.launch {
+            onDone(withContext(Dispatchers.IO) { history.read().asReversed() })
+        }
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch(Dispatchers.IO) { history.clear() }
+    }
+
+    /**
+     * Undo massal: tiap (paket, op) yang pernah diubah di riwayat dikembalikan ke
+     * status PALING AWAL yang tercatat. Rencana dihitung di [HistoryCodec.undoPlan];
+     * paket yang sudah ter-uninstall dilewati.
+     */
+    fun undoHistory(onDone: (applied: Int, skipped: Int, error: String?) -> Unit) {
+        viewModelScope.launch {
+            val apps = _state.value.apps
+            val plan = withContext(Dispatchers.IO) {
+                HistoryCodec.undoPlan(history.read())
+            }.mapNotNull { line ->
+                val entry = apps.firstOrNull { it.packageName == line.pkg } ?: return@mapNotNull null
+                val def = OpCatalog.byName(line.op) ?: return@mapNotNull null
+                Triple(entry, def, line.from)
+            }
+            // Lewati yang sudah sesuai — jangan menulis ulang tanpa perlu.
+            val pending = plan.filter { (entry, def, target) ->
+                !(def.op == OpCatalog.OVERLAY.op && entry.overlayStatus == target)
+            }
+            if (pending.isEmpty()) {
+                onDone(0, plan.size, null)
+                return@launch
+            }
+            applyPlan(pending, getApplication<Application>().getString(R.string.history_undoing), record = false) { applied, error ->
+                onDone(applied, plan.size - pending.size + (pending.size - applied).coerceAtLeast(0), error)
+            }
         }
     }
 
@@ -130,39 +189,60 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         targets: List<Pair<AppEntry, OpStatus>>,
         label: String,
         onDone: (applied: Int, error: String?) -> Unit,
-    ) {
-        if (targets.isEmpty()) return
-        val preferShell = _state.value.snapshot.preferShell
-        _state.update { it.copy(busy = "$label 0/${targets.size}…") }
+    ) = applyPlan(targets.map { Triple(it.first, OpCatalog.OVERLAY, it.second) }, label, record = true, onDone = onDone)
 
-        // Optimistic update all targets seketika
-        val targetMap = targets.associate { it.first.packageName to it.second }
-        _state.update { s ->
-            s.copy(apps = s.apps.map { entry ->
-                targetMap[entry.packageName]?.let { entry.copy(overlayStatus = it) } ?: entry
-            }).recompute()
+    private fun applyPlan(
+        plan: List<Triple<AppEntry, OpDef, OpStatus>>,
+        label: String,
+        record: Boolean,
+        onDone: (applied: Int, error: String?) -> Unit,
+    ) {
+        if (plan.isEmpty()) return
+        val preferShell = _state.value.snapshot.preferShell
+        _state.update { it.copy(busy = "$label 0/${plan.size}…") }
+
+        // Optimistic update seketika untuk op overlay (satu-satunya yang tampil di list utama)
+        val overlayPatch = plan.filter { it.second.op == OpCatalog.OVERLAY.op }
+            .associate { it.first.packageName to it.third }
+        if (overlayPatch.isNotEmpty()) {
+            _state.update { s ->
+                s.copy(apps = s.apps.map { entry ->
+                    overlayPatch[entry.packageName]?.let { entry.copy(overlayStatus = it) } ?: entry
+                }).recompute()
+            }
         }
 
         viewModelScope.launch {
             var applied = 0
             var firstError: String? = null
             withContext(Dispatchers.IO) {
-                targets.forEachIndexed { index, (entry, status) ->
+                plan.forEachIndexed { index, (entry, def, status) ->
                     val error = runCatching {
-                        repo.writeOp(entry, OpCatalog.OVERLAY, status, preferShell)
+                        repo.writeOp(entry, def, status, preferShell)
                     }.getOrElse { it.message ?: it.javaClass.simpleName }
                     if (error == null) {
                         applied++
+                        if (record && def.op == OpCatalog.OVERLAY.op && entry.overlayStatus != status) {
+                            history.append(
+                                HistoryLine(
+                                    System.currentTimeMillis(),
+                                    entry.packageName,
+                                    def.op,
+                                    entry.overlayStatus,
+                                    status,
+                                ),
+                            )
+                        }
                     } else {
                         if (firstError == null) firstError = "${entry.label}: $error"
-                        // Rollback untuk entry yang gagal
+                        // Rollback optimistic entry untuk target yang gagal
                         _state.update { s ->
                             s.copy(apps = s.apps.map {
                                 if (it.packageName == entry.packageName) entry else it
                             }).recompute()
                         }
                     }
-                    _state.update { it.copy(busy = "$label ${index + 1}/${targets.size}…") }
+                    _state.update { it.copy(busy = "$label ${index + 1}/${plan.size}…") }
                 }
             }
             _state.update { it.copy(busy = null) }

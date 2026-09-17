@@ -1,7 +1,10 @@
 package app.appsperms.ui
 
+import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.pm.PackageManager
+import android.os.Build
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -56,6 +59,10 @@ class MainActivity : AppCompatActivity() {
 
     private var detailDialog: AlertDialog? = null
     private var lastNotice: String? = null
+
+    /** v1.4: notifikasi foreground service perisai butuh izin runtime di Android 13+. */
+    private val notifPermissionLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { }
 
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener { probe("binder masuk") }
     private val binderDeadListener = Shizuku.OnBinderDeadListener { probe("binder mati") }
@@ -329,7 +336,9 @@ class MainActivity : AppCompatActivity() {
         previous: OpStatus,
         onUndoCallback: (() -> Unit)? = null,
     ) {
-        viewModel.applyStatus(entry, def, status) { error, _ ->
+        // `previous` adalah status op yang sebenarnya sebelum ditulis — diteruskan
+        // supaya riwayat (v1.4) mencatat dari/ke yang akurat, bukan asumsi overlay.
+        viewModel.applyStatus(entry, def, status, fromStatus = previous) { error, _ ->
             if (error == null) {
                 snackWithUndo(
                     getString(R.string.applied, entry.label, getString(status.labelRes)),
@@ -362,6 +371,51 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * v1.4 — Tuning: resolusi & DPI, animasi, booster ringan, perisai ghost-touch.
+     * Notifikasi foreground service perisai butuh izin runtime di Android 13+,
+     * jadi kita minta sekaligus di awal (kalau ditolak, service tetap jalan —
+     * hanya notifikasinya yang tidak tampil).
+     */
+    private fun showTweaks() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            notifPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        TweaksSheet.show(this, viewModel.state.value.snapshot.canOperate) { message ->
+            snack(message)
+        }
+    }
+
+    /**
+     * v1.4 — Riwayat & undo massal. Baris riwayat bisa diketuk untuk mencari
+     * paketnya di daftar (jalur cepat buat koreksi satu app).
+     */
+    private fun showHistorySheet() {
+        viewModel.historyLines { lines ->
+            HistorySheet.show(
+                this,
+                lines,
+                viewModel.state.value.snapshot.canOperate,
+                onUndo = { finish ->
+                    viewModel.undoHistory { applied, skipped, error ->
+                        finish(applied, skipped, error)
+                        viewModel.refresh(showSpinner = false)
+                    }
+                },
+                onClear = { viewModel.clearHistory() },
+            )
+        }
+    }
+
+    /** Isi kolom pencarian dari tempat lain (mis. sheet riwayat). */
+    fun searchFor(query: String) {
+        binding.search.setText(query)
+        binding.list.scrollToPosition(0)
+    }
+
     private fun handleMenu(action: MenuAction) {
         when (action) {
             MenuAction.REFRESH -> viewModel.refresh()
@@ -374,12 +428,16 @@ class MainActivity : AppCompatActivity() {
 
             MenuAction.BATCH -> showBatchDialog()
 
+            MenuAction.TWEAKS -> showTweaks()
+
             MenuAction.BACKUP -> copyToClipboard(
                 viewModel.exportBackup(),
                 getString(R.string.clip_label_backup),
             )
 
             MenuAction.RESTORE -> showRestoreDialog()
+
+            MenuAction.HISTORY -> showHistorySheet()
 
             MenuAction.REPORT -> MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.device_report)
@@ -596,8 +654,8 @@ class MainActivity : AppCompatActivity() {
         }
         ops.forEach { (def, initialStatus) ->
             val row = ItemOpBinding.inflate(layoutInflater, b.opsContainer, false)
-            row.opTitle.text = def.title
-            row.opDesc.text = "${def.op}\n${def.description}"
+            row.opTitle.setText(def.titleRes)
+            row.opDesc.text = getString(def.descRes) + "\n" + def.op
             row.opStatus.bindStatusChip(initialStatus)
             var currentStatus = initialStatus
             row.opRow.setOnClickListener {

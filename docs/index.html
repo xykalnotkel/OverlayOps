@@ -550,6 +550,7 @@
       overflow-wrap: anywhere;
     }
     .hash-table td.ok { color: var(--ok); font-weight: 600; font-size: 0.86rem; }
+    .hash-when { color: var(--text-muted); font-size: 0.78em; }
 
     @media (min-width: 640px) {
       .vt-header-bar { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 14px 20px; }
@@ -688,7 +689,7 @@
         <a href="https://github.com/xykalnotkel/OverlayOps" target="_blank" rel="noopener" class="nav-link">GitHub</a>
         <a href="#unduh" class="nav-cta">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Unduh APK v1.3.0
+          Unduh APK v1.4.0
         </a>
       </div>
     </div>
@@ -717,17 +718,17 @@
 
       <div class="xyverse-badge">
         <span class="dot"></span>
-        Built in XyVerse · v1.3.0 Rilis Resmi
+        Built in XyVerse · v1.4.0 Rilis Resmi
       </div>
 
       <div class="btn-group">
-        <a id="btnRelease" href="https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-release.apk"
-           class="btn-cf-glossy" data-download="release" data-variant="release">
+        <a id="btnRelease" href="https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-release.apk"
+           download class="btn-cf-glossy" data-download="release" data-variant="release">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span class="dl-label">Download Release APK (1.87 MB)</span>
+          <span class="dl-label">Download Release APK (±1,9 MB)</span>
         </a>
-        <a id="btnDebug" href="https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-debug.apk"
-           class="btn-dark-glossy" data-download="debug" data-variant="debug">
+        <a id="btnDebug" href="https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-debug.apk"
+           download class="btn-dark-glossy" data-download="debug" data-variant="debug">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           <span class="dl-label">Debug APK (5.86 MB)</span>
         </a>
@@ -737,7 +738,7 @@
 
       <p class="req-line">
         <span>Android 7.0+</span><span aria-hidden="true">·</span>
-        <span>1.87 MB</span><span aria-hidden="true">·</span>
+        <span id="reqSize">±1,9 MB</span><span aria-hidden="true">·</span>
         <span>Butuh aplikasi Shizuku</span><span aria-hidden="true">·</span>
         <span>Gratis &amp; tanpa iklan</span>
       </p>
@@ -745,7 +746,7 @@
       <div class="pill-row">
         <div class="pill">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          0/72 Clean di VirusTotal
+          <span id="vtPillText">0/72 Clean di VirusTotal</span>
         </div>
         <div class="pill">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -778,8 +779,48 @@
       </div>
     </section>
 
-    <!-- Changelog -->
+    <!-- Baru di v1.4.0 -->
     <section id="baru">
+      <div class="sec-head">
+        <h2 class="sec-title">Baru di v1.4.0 — Paket Tweak</h2>
+        <p class="sec-sub">AppsPerms kini bukan cuma manajer AppOps: satu sheet Tuning untuk performa, tampilan, dan proteksi.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.2" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 18v3"/></svg>
+            Resolusi &amp; DPI (auto-revert 15 detik)
+          </div>
+          <p class="feat-card-desc">
+            Turunkan resolusi lewat preset 50–90% (rasio terjaga) atau angka manual lewat <code>wm size/density</code>.
+            Ada jaring pengaman: tidak dikonfirmasi → sistem kembali sendiri. Tidak ada skenario layar terkunci.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.2" aria-hidden="true"><path d="M12 2v6"/><path d="M12 22a8 8 0 0 0 8-8c0-4-4-6-8-12-4 6-8 8-8 12a8 8 0 0 0 8 8z"/></svg>
+            Perisai Anti Ghost-Touch
+          </div>
+          <p class="feat-card-desc">
+            Pita transparan di tepi layar menelan sentuhan hantu sebelum masuk ke app. Atur sisi &amp; ketebalan,
+            mode uji berwarna, pause 60 detik dari notifikasi — dan AppsPerms meng-grant izin overlay untuk dirinya sendiri.
+          </p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2.2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            Riwayat &amp; Undo Massal
+          </div>
+          <p class="feat-card-desc">
+            Semua perubahan AppOps tercatat. Satu tombol mengembalikan seluruh app &amp; op ke status paling awal —
+            cocok setelah eksperimen massal.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Changelog arsip -->
+    <section id="baru-130">
       <div class="sec-head">
         <h2 class="sec-title">Baru di v1.3.0</h2>
         <p class="sec-sub">Fokus rilis ini: kejelasan dan kenyamanan pakai, bukan sekadar menambah fitur.</p>
@@ -880,13 +921,13 @@
       <div class="vt-wrap">
         <div class="vt-header-bar">
           <div class="vt-status-pill">
-            <span class="score-badge">0 / 72</span>
+            <span class="score-badge" id="vtScore">0 / 72</span>
             <div class="vt-status-text">
-              <strong>100% Clean · No Security Vendors Flagged This File</strong>
+              <strong id="vtVerdict">100% Clean · No Security Vendors Flagged This File</strong>
               <div class="vendors">Google Play Protect, Kaspersky, BitDefender, Microsoft, ESET, Sophos — Undetected</div>
             </div>
           </div>
-          <a href="https://www.virustotal.com/gui/home/upload" target="_blank" rel="noopener" class="btn-dark-glossy">
+          <a id="vtLink" href="https://www.virustotal.com/gui/home/upload" target="_blank" rel="noopener" class="btn-dark-glossy">
             Verifikasi di VirusTotal ↗
           </a>
         </div>
@@ -894,7 +935,7 @@
         <div class="vt-img-box">
           <img src="images/virustotal-report.png" width="1400" height="820" loading="lazy" decoding="async" alt="Screenshot Hasil Scan VirusTotal AppsPerms 0/72 Clean">
           <div class="vt-caption">
-            <span>Screenshot dari rilis <code>OverlayOps-1.2.0</code> — APK v1.3.0 dibangun dari basis kode yang sama; hash resminya ada di bawah.</span>
+            <span>Screenshot &amp; angka di kartu ini <strong>diperbarui otomatis oleh CI setiap rilis</strong> <span id="vtUpdated">(sumber: <code>data/virustotal.json</code>)</span>.</span>
             <span>Target SDK: 34 · Signed Keystore Resmi</span>
           </div>
         </div>
@@ -903,8 +944,8 @@
           <table class="hash-table">
             <tbody>
               <tr>
-                <td class="label">SHA-256 APK</td>
-                <td class="code">f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac</td>
+                <td class="label">SHA-256 APK rilis</td>
+                <td class="code" id="hashRelease">f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac <span class="hash-when" id="hashWhen">· v1.3.0</span></td>
               </tr>
               <tr>
                 <td class="label">Sertifikat Signing</td>
@@ -1064,53 +1105,60 @@
       });
     })();
 
-    /* ===== Download → halaman Terima kasih ===== */
+    /* ===== v1.4: tombol download = unduhan NATIVE; thanks hanya tab baru ===== */
     (function () {
-      var VERSION = '1.3.0';
-      var hint = document.getElementById('dlHint');
+      var VERSION = '1.4.0';
 
-      function go(id) {
+      ['btnRelease', 'btnDebug'].forEach(function (id) {
         var a = document.getElementById(id);
         if (!a) return;
-        var url = a.getAttribute('href');
-        var variant = a.getAttribute('data-variant') || 'release';
-        var label = a.querySelector('.dl-label');
-        var original = label ? label.textContent : '';
+        // href APK dibiarkan default (browser mengunduh; GitHub mengirim
+        // Content-Disposition: attachment) — tidak ada preventDefault/iframe lagi.
+        a.addEventListener('click', function () {
+          var variant = a.getAttribute('data-variant') || 'release';
+          try {
+            window.open('thanks.html?v=' + encodeURIComponent(VERSION) + '&var=' + encodeURIComponent(variant), '_blank', 'noopener');
+          } catch (e) { /* tab diblokir: unduhan tetap jalan, biarkan saja */ }
+          var hint = document.getElementById('dlHint');
+          if (hint) {
+            hint.textContent = 'Unduhan dimulai ✓ — halaman terima kasih dibuka di tab baru.';
+            hint.classList.add('show');
+          }
+        });
+      });
 
-        // 1) mulai unduhan TANPA meninggalkan halaman (iframe tersembunyi,
-        //    GitHub mengirim Content-Disposition: attachment)
-        try {
-          var frame = document.createElement('iframe');
-          frame.style.cssText = 'display:none;width:0;height:0;border:0';
-          frame.setAttribute('aria-hidden', 'true');
-          frame.src = url;
-          document.body.appendChild(frame);
-        } catch (err) { /* lanjut saja, ada tombol unduh ulang di halaman terima kasih */ }
-
-        // 2) umpan balik di tombol
-        a.classList.add('is-loading');
-        if (label) label.textContent = 'Menyiapkan unduhan…';
-        if (hint) {
-          hint.textContent = 'Unduhan dimulai — membuka halaman terima kasih…';
-          hint.classList.add('show');
+      /* Data live hash + VirusTotal (ditulis ulang otomatis oleh CI tiap rilis). */
+      fetch('data/virustotal.json', { cache: 'no-store' }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (d) {
+        if (!d) return;
+        if (d.version) {
+          var hs = document.getElementById('hashWhen');
+          if (hs) hs.textContent = '· v' + d.version;
         }
-
-        // 3) pindah ke halaman terima kasih
-        setTimeout(function () {
-          window.location.assign('thanks.html?v=' + encodeURIComponent(VERSION) + '&var=' + encodeURIComponent(variant) + '&auto=1');
-        }, 650);
-
-        // jaring pengaman: kalau navigasi dibatalkan, pulihkan tombol
-        setTimeout(function () {
-          a.classList.remove('is-loading');
-          if (label) label.textContent = original;
-        }, 4000);
-      }
-
-      var release = document.getElementById('btnRelease');
-      var debug = document.getElementById('btnDebug');
-      if (release) release.addEventListener('click', function (e) { e.preventDefault(); go('btnRelease'); });
-      if (debug) debug.addEventListener('click', function (e) { e.preventDefault(); go('btnDebug'); });
+        if (d.release) {
+          if (d.release.sha256) {
+            var hr = document.getElementById('hashRelease');
+            if (hr) hr.innerHTML = d.release.sha256 + ' <span class="hash-when" id="hashWhen">· v' + (d.version || '') + '</span>';
+          }
+          if (d.release.size_mb) {
+            var sizeTxt = '\u00b1' + String(d.release.size_mb).replace('.', ',') + ' MB';
+            var rel = document.getElementById('btnRelease');
+            if (rel) { var l = rel.querySelector('.dl-label'); if (l) l.textContent = 'Download Release APK (' + sizeTxt + ')'; }
+            var rs = document.getElementById('reqSize'); if (rs) rs.textContent = sizeTxt;
+          }
+        }
+        var vt = d.virustotal || {};
+        if (vt.checked) {
+          var sc = document.getElementById('vtScore'); if (sc) sc.textContent = vt.detected + ' / ' + vt.total;
+          var pl = document.getElementById('vtPillText'); if (pl) pl.textContent = vt.detected + '/' + vt.total + ' Clean di VirusTotal';
+          var vd = document.getElementById('vtVerdict');
+          if (vd) vd.textContent = (vt.detected === 0 ? '100% Clean · No Security Vendors Flagged This File' : vt.detected + ' vendor menandai — cek permalink sebelum install');
+          var lk = document.getElementById('vtLink'); if (lk && vt.permalink) { lk.href = vt.permalink; }
+          var up = document.getElementById('vtUpdated');
+          if (up) up.textContent = 'Diperbarui otomatis oleh CI · ' + (d.updated_utc || '?') + ' UTC · rilis v' + (d.version || '?');
+        }
+      }).catch(function () { /* offline/github-pages tanpa file: pakai angka statis */ });
     })();
   </script>
 

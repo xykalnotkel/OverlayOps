@@ -29,10 +29,13 @@ Kunjungi landing page lengkap OverlayOps:
 
 | Varian | Link Unduh | Ukuran | SHA-256 | Catatan |
 |---|---|---|---|---|
-| **Release APK (Disarankan)** | **[AppsPerms-1.3.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-release.apk)** | **1,87 MB** | `f0439e13…38cac` | Signed keystore resmi, R8 minified |
-| Debug APK (Troubleshooting) | [AppsPerms-1.3.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.3.0/AppsPerms-1.3.0-debug.apk) | ~5,9 MB | `35d3cf58…d1d74` | Logging logcat aktif, unstripped |
-| Tag Releases | [GitHub Releases](https://github.com/xykalnotkel/OverlayOps/releases) | — | — | Semua rilisan & changelog |
-| Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | — | Build + unit test otomatis |
+| **Release APK (Disarankan)** | **[AppsPerms-1.4.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-release.apk)** | ~1,9 MB | *live* → `docs/data/virustotal.json` | Signed keystore resmi, R8 minified |
+| Debug APK (Troubleshooting) | [AppsPerms-1.4.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-debug.apk) | ~5,9 MB | *live* → `docs/data/virustotal.json` | Logging logcat aktif, unstripped |
+| Arsip v1.3.0 | [GitHub Releases](https://github.com/xykalnotkel/OverlayOps/releases) | 1,87 MB | `f0439e13…38cac` | SHA-256 lengkap di halaman rilis |
+| Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | — | Build + unit test + **scan VirusTotal otomatis** |
+
+> ℹ️ Mulai prosedur rilis v1.4.0, **hash & hasil scan VirusTotal tidak pernah ditulis manual lagi** —
+> CI mengisinya otomatis per tag (lihat bagian 🔬 di bawah), jadi tabel ini tidak bisa basi.
 
 > ⚠️ **Penting:** sejak v1.3.0 `applicationId` berubah dari `app.overlayops` menjadi `app.appsperms`.
 > Android menganggapnya aplikasi baru — **uninstall versi OverlayOps dulu**, baru pasang AppsPerms
@@ -57,6 +60,77 @@ Alasannya:
 1. **Keterbatasan modal**: Biaya pendaftaran akun Google Play Console ($25 USD) dan birokrasi verifikasi korporat/identitas yang ketat untuk pengembang independen.
 2. **Kebijakan Google Play**: Google semakin memperketat dan membatasi aplikasi yang mengelola izin sistem / Shizuku.
 3. Rilis mandiri via GitHub Releases menjaga OverlayOps tetap 100% bebas, tanpa iklan, dan tanpa pelacak.
+
+---
+
+> ⚠️ **Catatan v1.4.0 (repo):** fitur Tuning baru ada di source + build CI, **belum dirilis resmi** —
+> tabel di atas masih merujuk v1.3.0 sampai tag `v1.4.0` di-push.
+
+
+## 🆕 Yang Baru di v1.4.0 — Paket Tweak
+
+Rilis ini mengubah AppsPerms dari "manajer AppOps" menjadi **perlengkapan tuning ringan**,
+semuanya lewat shell Shizuku (tanpa root):
+
+1. **🖥 Resolusi & DPI (`wm size` / `wm density`)**
+   - Preset 50/65/75/90% yang mempertahankan rasio layar (pembulatan genap) + input manual `WxH`
+     dengan validasi (tolak landscape, tolak >2× ukuran fisik, density dibatasi 120–640).
+   - **Auto-revert 15 detik**: konfirmasi "Tetap / Kembalikan" berjalan di luar activity, jadi
+     walaupun layar berubah ukuran dan activity dibuat ulang, override yang bikin tidak nyaman
+     tetap dikembalikan otomatis. Tidak ada skenario layar terkunci.
+   - Mode "density ikut otomatis" menjaga UI tetap proporsional saat resolusi diturunkan.
+   - Catatan ROM: MIUI/HyperOS menolak perintah `wm` sebelum **Opsi pengembang →
+     "USB debugging (Security settings)"** aktif — pesan error ROM ditampilkan apa adanya biar bisa dicopy.
+
+2. **⚡ Animasi global** — satu tap ke 0× / 0.5× / 1× untuk `window_animation_scale`,
+   `transition_animation_scale`, `animator_duration_scale` (ketiganya ditulis dalam satu perintah).
+
+3. **🧹 Ringan sekejap** — `am kill-all` (hanya proses *cached*, foreground aman) dan
+   `pm trim-caches 750MB` (mekanisme resmi, sistem yang memutuskan cache mana yang boleh dibuang).
+   Sengaja **tanpa "booster RAM" palsu** dan tanpa `set-process-limit` (tidak ada di `am` shell AOSP
+   dan `service call` antar-versi beda — bukan kompromi yang layak).
+
+4. **👻 Perisai Anti Ghost-Touch** — layanan jendela overlay yang menempelkan **pita penangkap sentuhan**
+   di sisi atas/bawah/kiri/kanan (tebal 12–96 dp, mode uji berwarna, peringatan kalau cakupan >30% layar).
+   Sentuhan hantu di zona itu ditelan sebelum masuk ke app di bawah (Android 12+ memblokir sentuhan ke
+   area tertutup overlay sebagai lapisan kedua).
+   - Butuh op `SYSTEM_ALERT_WINDOW` untuk **diri sendiri** — dan karena AppsPerms adalah manajer op itu,
+     grant-nya cukup satu tombol (*dogfooding*).
+   - Jalur kabur: tahan 1,5 dtk pada pita membuka app, aksi notifikasi **Tahan 60 dtk** / **Matikan**,
+     foreground service `specialUse` (Android 14-ready).
+   - Jujur di UI: ghost-touch hardware murni (digitizer/charger) hanya diredam, bukan disembuhkan.
+
+5. **🌐 i18n OpCatalog dituntaskan** — janji v1.3.0 ("seluruh teks dipindah ke resource") baru berlaku untuk
+   chrome UI; judul + deskripsi 19 op dan header grup masih hardcode Indonesia di `OpCatalog.kt`. Sekarang
+   semuanya `R.string.op_*` (ID + EN, 305↔305 string paritas) — user English tidak lagi lihat sheet "Privasi".
+
+6. **⏱️ Riwayat & Undo massal** — tiap penulisan AppOps lewat app ini tercatat (`op_history.log`, 500 entri terakhir).
+   Menu → **Riwayat & undo massal**: daftar perubahan + tombol **Undo semua** (tiap app+op kembali ke status
+   TERAWAL yang tercatat, paket yang sudah ter-uninstall dilewati), **Salin** (laporan teks), **Hapus**.
+   Ketuk satu baris → nama paket terisi di pencarian. Sekalian bug fix: early-return `applyStatus` dulunya
+   bisa melewati penulisan op non-overlay kalau status overlay kebetulan sama — sudah diperbaiki.
+
+7. ** Fondasi uji ikut naik** — `WmParser` (parsing `wm size|density`, validasi, preset), `GhostGuard`
+   (geometri pita + fraksi cakupan) dan `HistoryCodec` (serialisasi riwayat + rencana undo) adalah fungsi murni;
+   **24 unit test baru** (parser `wm`, geometri pita, codec riwayat) → **total 45**, semua hijau di `testDebugUnitTest`
+   (parser density ikut tertangkap & diperbaiki oleh test 😄).
+
+8. **🌐 Website: alur unduh & audit live** — tombol APK kini memicu **unduhan native browser** (tanpa redirect
+   iframe; halaman Terima Kasih terbuka di tab baru, **tanpa tombol download lagi**). Hash, ukuran & skor
+   VirusTotal di index.html/thanks.html dibaca dari **`docs/data/virustotal.json`** yang ditulis ulang CI tiap rilis.
+
+### 🔬 Prosedur rilis (VirusTotal otomatis per tag)
+
+```bash
+git tag v1.4.0 && git push origin main v1.4.0
+```
+Lalu CI (`build.yml`) otomatis: unit test → build debug+release signed → **unggah APK release ke VirusTotal
+via secret `VT_API_KEY`** → polling sampai selesai → menulis `docs/data/virustotal.json` + regenerate
+kartu hasil scan (`docs/images/virustotal-report.png`, dari `docs/tools/make-vt-card.py`) → commit balik ke
+`main` (perubahan `docs/**` tidak memicu build ulang) → append blok "Audit VirusTotal" + SHA-256 ke
+**catatan rilis** (`body_path`). Tanpa `VT_API_KEY`, scan dilewati dengan warning — hash & ukuran tetap
+dipublikasikan. Cara set secret sekali: repo → Settings → Secrets and variables → Actions → `VT_API_KEY`
+(kunci gratis: VirusTotal → personal API key).
 
 ---
 
@@ -109,6 +183,7 @@ Tanpa root, tanpa Magisk, tanpa ADB terus-menerus. Cukup pairing Wireless Debugg
 3. Buka AppsPerms → tekan **Minta izin** → Izinkan selalu.
 4. Ketuk app untuk detail 19 AppOps, atau ketuk chip status / tahan lama baris untuk mengubah mode overlay.
 5. Menu titik tiga di kanan atas: aksi massal, backup/restore, laporan perangkat, dan **Pengaturan** (bahasa, konfirmasi mode berisiko).
+6. **Tuning** (menu → *Tuning performa & layar*): preset resolusi/DPI dengan auto-revert 15 dtk, animasi 0×, pembersih proses & cache, dan **perisai anti ghost-touch** (aktifkan tombol "Izinkan lewat Shizuku" sekali — AppsPerms meng-grant op overlay untuk dirinya sendiri).
 
 ---
 

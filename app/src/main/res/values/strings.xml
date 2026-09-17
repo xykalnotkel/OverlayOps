@@ -204,8 +204,151 @@
     <string name="settings_sort">Urutan daftar saat dibuka</string>
     <string name="settings_footer">Versi %1$s (%2$d) · tanpa iklan · tanpa izin internet</string>
 
+    <!-- ================= v1.4 Tuning ================= -->
+    <string name="menu_tweaks">Tuning performa &amp; layar</string>
+    <string name="menu_tweaks_sub">Resolusi/DPI, animasi, pembersih, anti ghost-touch</string>
+    <string name="tweaks_title">Tuning</string>
+    <string name="tweaks_subtitle">Ubah resolusi &amp; DPI, percepat animasi, ringankan RAM — lewat shell Shizuku, tanpa root</string>
+    <string name="tweaks_footer">Semua perubahan bersifat live dan bisa dibalik. Kalau ROM menolak perintah (MIUI/ColorOS kadang memblokir `wm`), buka menu → Laporan perangkat untuk melihat error aslinya.</string>
+
+    <string name="tweaks_display">Resolusi &amp; DPI</string>
+    <string name="tweaks_display_note">Menurunkan resolusi membuat GPU bekerja lebih ringan (bisa lebih irit &amp; mulus di HP kentang), tapi teks jadi kurang tajam. Selalu ada auto-revert 15 detik kalau kamu tidak menekan \"Tetap\".</string>
+    <string name="tweaks_size_change">Ubah…</string>
+    <string name="tweaks_reset">Reset</string>
+    <string name="tweaks_reset_done">Resolusi &amp; DPI dikembalikan ke bawaan ✓</string>
+    <string name="tweaks_need_shizuku">Sambungkan Shizuku dulu sebelum memakai tuning.</string>
+    <string name="tweaks_read_fail">Gagal membaca `wm`: %1$s</string>
+    <string name="tweaks_apply_fail">ROM menolak perintah: %1$s</string>
+    <string name="tweaks_display_unread">Tidak dapat membaca resolusi layar</string>
+    <string name="tweaks_display_physical">Bawaan: %1$s</string>
+    <string name="tweaks_display_override">Override %1$s (fisik %2$s)</string>
+
+    <string name="res_dialog_title">Resolusi &amp; density</string>
+    <string name="res_presets">Preset (rasio dipertahankan)</string>
+    <string name="res_manual_size">atau ketik manual</string>
+    <string name="res_size_hint">mis. 720x1600</string>
+    <string name="res_auto_density">Sesuaikan DPI otomatis (UI tetap proporsional)</string>
+    <string name="res_density_hint">DPI manual, mis. 320</string>
+    <string name="res_density_range">Density harus angka %1$d–%2$d</string>
+    <string name="res_warning">⚠ Di beberapa ROM (MIUI/HyperOS) nyalakan dulu Opsi Pengembang → \"USB debugging (Security settings)\", kalau tidak perintah wm ditolak. Salah pilih angka tidak berbahaya: auto-revert akan mengembalikannya.</string>
+    <string name="res_confirm_title">Coba tampilan baru?</string>
+    <string name="res_confirm_body">Layar akan kembali otomatis dalam %1$d detik kalau kamu tidak memilih \"Tetap\" — jadi tidak bisa terkunci. Tekan tahan 1,5 dtk pada layar kalau tombol tidak terlihat.</string>
+    <string name="res_confirm_hint">Konfirmasi tampilan masih berjalan — buka Tuning lagi untuk Tetap/Batal.</string>
+    <string name="res_keep">Tetap</string>
+    <string name="res_revert">Kembalikan</string>
+    <string name="res_kept">Resolusi baru dipertahankan ✓</string>
+    <string name="res_reverted">Kembali ke resolusi bawaan ✓</string>
+    <string name="res_autoreverted">Tidak dikonfirmasi — kembali otomatis ke bawaan</string>
+
+    <string name="tweaks_anim">Animasi</string>
+    <string name="tweaks_anim_note">Mematikan animasi jendela/transisi membuat HP terasa jauh lebih responsif. Sama seperti 3 slider di Opsi Pengembang.</string>
+    <string name="tweaks_anim_off">0× mati</string>
+    <string name="tweaks_anim_half">0,5×</string>
+    <string name="tweaks_anim_full">1× bawaan</string>
+    <string name="tweaks_anim_current">Skala saat ini: %1$s</string>
+    <string name="tweaks_anim_unknown">tidak terbaca</string>
+    <string name="tweaks_anim_set">Skala animasi diatur ke %1$s ✓</string>
+
+    <string name="tweaks_boost">Ringan sekejap</string>
+    <string name="tweaks_kill_bg">Bunuh proses latar</string>
+    <string name="tweaks_trim_cache">Bersihkan cache</string>
+    <string name="tweaks_boost_note">\"Bunuh\" hanya menghapus proses CACHED (app yang sedang dipakai &amp; musik/unduh aman). \"Cache\" memakai mekanisme resmi sistem dengan target sisa ruang 750 MB.</string>
+    <string name="tweaks_kill_done">Proses latar bersih ✓</string>
+    <string name="tweaks_trim_done">Cache dibersihkan ✓</string>
+    <string name="tweaks_busy">Bekerja…</string>
+
+    <string name="guard_title">Perisai anti ghost-touch</string>
+    <string name="guard_switch">Aktifkan perisai</string>
+    <string name="guard_switch_desc">Pasang pita tak terlihat di tepi layar untuk menelan sentuhan hantu. Tahan 1,5 dtk pada pita membuka AppsPerms lagi.</string>
+    <string name="guard_perm_missing">AppsPerms butuh op overlay untuk dirinya sendiri supaya pita bisa dipasang.</string>
+    <string name="guard_perm_no_shizuku">Sambungkan Shizuku dulu — atau izinkan overlay AppsPerms lewat Settings sistem.</string>
+    <string name="guard_grant">Izinkan lewat Shizuku</string>
+    <string name="guard_grant_ok">Op overlay AppsPerms diizinkan ✓</string>
+    <string name="guard_grant_restart">Op di-set, tapi belum terbaca sistem — buka ulang AppsPerms sekali ya.</string>
+    <string name="guard_sides">Sisi yang dilindungi</string>
+    <string name="guard_side_top">Atas</string>
+    <string name="guard_side_bottom">Bawah</string>
+    <string name="guard_side_left">Kiri</string>
+    <string name="guard_side_right">Kanan</string>
+    <string name="guard_thickness">Ketebalan pita</string>
+    <string name="guard_thickness_value">%1$d dp</string>
+    <string name="guard_test">Mode uji (pita terlihat)</string>
+    <string name="guard_note">Catatan: ghost-touch yang berasal dari hardware (digitizer rusak / charger bocor) hanya diredam, bukan hilang — colok charger lain adalah obat paling manjur. Area status bar tetap milik sistem.</string>
+    <string name="guard_no_band">Pilih minimal satu sisi dulu.</string>
+    <string name="guard_too_thick">⚠ Pita menutupi %1$d%% layar — HP akan terasa sulit dipakai.</string>
+    <string name="guard_channel">Perisai ghost-touch</string>
+    <string name="guard_notif_title">Perisai ghost-touch aktif</string>
+    <string name="guard_notif_active">%1$d pita · tebal %2$d dp · uji: %3$s</string>
+    <string name="guard_notif_paused">Ditahan — pasang lagi dalam %1$d dtk</string>
+    <string name="guard_notif_pause">Tahan 60 dtk</string>
+    <string name="guard_notif_stop">Matikan</string>
+    <string name="guard_test_on">ON</string>
+    <string name="guard_test_off">OFF</string>
+    <string name="guard_started">Perisai aktif ✓</string>
+    <string name="guard_stopped">Perisai dimatikan</string>
+    <string name="guard_start_fail">Perisai gagal start: %1$s</string>
+
     <!-- laporan & tentang -->
     <string name="device_report">Laporan perangkat</string>
     <string name="about_title">Tentang AppsPerms</string>
     <string name="about_body">AppsPerms — pengelola AppOps ringan yang fokus ke SYSTEM_ALERT_WINDOW (Display over other apps) dan 18 op terkait (kamera, mikrofon, clipboard, lokasi, dst).\n\nBuilt in XyVerse (@xykalnotkel)\n\nCara kerja: baca/tulis langsung via Shizuku tanpa root permanen. Super responsif, 100% transparan, tanpa iklan, dan tanpa izin internet (data tidak pernah keluar dari perangkat).</string>
+
+
+    <!-- ================= v1.4 i18n OpCatalog ================= -->
+    <string name="opgroup_overlay">Overlay &amp; jendela</string>
+    <string name="opgroup_privacy">Privasi</string>
+    <string name="opgroup_media">Kamera &amp; mikrofon</string>
+    <string name="opgroup_background">Latar belakang &amp; sistem</string>
+    <string name="op_overlay_title">Display over other apps</string>
+    <string name="op_overlay_desc">Boleh menggambar jendela di atas aplikasi lain (overlay). Tanpa op ini app sering gagal menampilkan bubble, floating button, atau tampilan anti-overlay di app banking.</string>
+    <string name="op_toast_title">Tampilkan toast</string>
+    <string name="op_toast_desc">Menampilkan pesan toast sistem di atas app lain.</string>
+    <string name="op_pip_title">Picture-in-picture</string>
+    <string name="op_pip_desc">Menampilkan jendela video mengambang.</string>
+    <string name="op_cast_title">Proyeksi media (cast)</string>
+    <string name="op_cast_desc">Menampilkan media ke perangkat lain.</string>
+    <string name="op_clipboard_title">Baca clipboard</string>
+    <string name="op_clipboard_desc">Membaca isi clipboard secara diam-diam.</string>
+    <string name="op_contacts_title">Baca kontak</string>
+    <string name="op_contacts_desc">Mengakses daftar kontak.</string>
+    <string name="op_calendar_title">Baca kalender</string>
+    <string name="op_calendar_desc">Mengakses data kalender.</string>
+    <string name="op_location_fine_title">Lokasi presisi</string>
+    <string name="op_location_fine_desc">Mengakses GPS presisi tinggi.</string>
+    <string name="op_location_coarse_title">Lokasi kasar</string>
+    <string name="op_location_coarse_desc">Mengakses lokasi perkiraan.</string>
+    <string name="op_mock_location_title">Lokasi palsu</string>
+    <string name="op_mock_location_desc">Memalsukan lokasi perangkat (mock location).</string>
+    <string name="op_camera_title">Kamera</string>
+    <string name="op_camera_desc">Membuka kamera di belakang layar.</string>
+    <string name="op_mic_title">Mikrofon</string>
+    <string name="op_mic_desc">Merekam audio.</string>
+    <string name="op_write_settings_title">Ubah system settings</string>
+    <string name="op_write_settings_desc">Mengubah pengaturan sistem tanpa izin normal.</string>
+    <string name="op_usage_stats_title">Statistik pemakaian app</string>
+    <string name="op_usage_stats_desc">Membaca data pemakaian app (UsageStats).</string>
+    <string name="op_install_apk_title">Minta install APK</string>
+    <string name="op_install_apk_desc">Meminta instalasi paket dari luar store.</string>
+    <string name="op_delete_pkg_title">Minta hapus paket</string>
+    <string name="op_delete_pkg_desc">Meminta penghapusan aplikasi lain.</string>
+    <string name="op_wakelock_title">Wakelock</string>
+    <string name="op_wakelock_desc">Menahan perangkat tetap bangun.</string>
+    <string name="op_vibrate_title">Getar</string>
+    <string name="op_vibrate_desc">Mengakses getaran perangkat.</string>
+    <string name="op_background_run_title">Jalan di latar belakang</string>
+    <string name="op_background_run_desc">Diizinkan berjalan di background.</string>
+
+    <!-- riwayat & undo -->
+    <string name="menu_history">Riwayat &amp; undo massal</string>
+    <string name="menu_history_sub">Semua perubahan yang dilakukan AppsPerms + kembalikan ke semula</string>
+    <string name="history_title">Riwayat perubahan</string>
+    <string name="history_subtitle">%1$d entri · undo mengembalikan tiap app &amp; op ke status paling awal yang tercatat</string>
+    <string name="history_empty">Belum ada perubahan tercatat — semua penulisan AppOps lewat app ini akan tercatat di sini.</string>
+    <string name="history_undo_all">Undo semua (%1$d)</string>
+    <string name="history_undoing">Mengundo…</string>
+    <string name="history_undo_done">%1$d dikembalikan · %2$d dilewati (tidak ditemukan / sudah sesuai)</string>
+    <string name="history_copy">Salin</string>
+    <string name="history_clear">Hapus</string>
+    <string name="history_cleared">Riwayat dibersihkan</string>
+
 </resources>
