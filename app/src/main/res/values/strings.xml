@@ -361,4 +361,32 @@
     <string name="about_website">Website</string>
     <string name="about_source">Source code</string>
     <string name="about_credit">Built with care in XyVerse · @xykalnotkel</string>
+    <string name="safe_tuning_title">Proteksi &amp; profil aman</string>
+    <string name="protected_app_none">Tidak ada aplikasi yang dilindungi</string>
+    <string name="protected_app_value">Dilindungi: %1$s</string>
+    <string name="protected_app_note">Membantu app tetap aktif di latar dan mengecualikannya dari Doze. Android/ROM tetap dapat menghentikannya setelah force-stop atau swipe.</string>
+    <string name="protected_app_pick">Pilih aplikasi</string>
+    <string name="protected_app_clear">Lepas</string>
+    <string name="protected_app_done">Proteksi latar diterapkan untuk %1$s ✓</string>
+    <string name="protected_app_removed">Proteksi latar dilepas ✓</string>
+    <string name="profiles_title">Profil manual</string>
+    <string name="profiles_note">Tidak pernah aktif otomatis. Gaming memakai animasi 0,5×; Hemat memakai 1× agar stabil.</string>
+    <string name="profile_gaming">Gaming 0,5×</string>
+    <string name="profile_battery">Hemat 1×</string>
+    <string name="profile_confirm">Terapkan profil %1$s? Tidak ada perubahan sebelum kamu menekan Terapkan.</string>
+    <string name="snapshot_save">Simpan kondisi</string>
+    <string name="snapshot_restore">Pulihkan</string>
+    <string name="snapshot_saved">Kondisi layar dan animasi tersimpan ✓</string>
+    <string name="snapshot_empty">Belum ada kondisi yang disimpan.</string>
+    <string name="snapshot_restored">Kondisi sebelumnya dipulihkan ✓</string>
+    <string name="tweak_diagnostics">Lihat diagnostik tweak</string>
+    <string name="tweak_diag_title">Diagnostik tuning</string>
+    <string name="tweak_diag_body">Layar: %1$s
+Animasi: %2$s
+App terlindungi: %3$s
+
+Fitur penelan sentuhan: NONAKTIF
+Pembersih proses: NONAKTIF
+Tweak otomatis: TIDAK ADA</string>
+    <string name="snapshot_restore_confirm">Pulihkan resolusi, DPI, dan animasi persis ke kondisi yang terakhir disimpan?</string>
 </resources>

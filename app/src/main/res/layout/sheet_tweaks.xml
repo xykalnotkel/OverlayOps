@@ -395,6 +395,74 @@
                 android:textSize="10sp" />
         </LinearLayout>
 
+        <!-- ================= Tuning aman ================= -->
+        <TextView
+            style="@style/SectionLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="14dp"
+            android:paddingBottom="6dp"
+            android:text="@string/safe_tuning_title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView android:id="@+id/protectedAppStatus"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/protected_app_none" android:textColor="@color/on_surface" android:textSize="13sp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="@string/protected_app_note"
+                android:textColor="@color/on_surface_dim" android:textSize="10sp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnPickProtected"
+                    style="@style/Widget.Material3.Button.TonalButton" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="44dp"
+                    android:text="@string/protected_app_pick" android:textSize="11sp" app:cornerRadius="12dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnClearProtected"
+                    style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_marginStart="6dp" android:minHeight="44dp"
+                    android:text="@string/protected_app_clear" android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" android:text="@string/profiles_title"
+                android:textColor="@color/on_surface" android:textSize="13sp" android:textStyle="bold" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="3dp" android:text="@string/profiles_note"
+                android:textColor="@color/on_surface_dim" android:textSize="10sp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnProfileGaming"
+                    style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="44dp"
+                    android:text="@string/profile_gaming" android:textSize="11sp" app:cornerRadius="12dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnProfileBattery"
+                    style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_marginStart="6dp" android:layout_weight="1"
+                    android:minHeight="44dp" android:text="@string/profile_battery" android:textSize="11sp" app:cornerRadius="12dp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="6dp" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnSnapshot"
+                    style="@style/Widget.Material3.Button.TonalButton" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="44dp"
+                    android:text="@string/snapshot_save" android:textSize="11sp" app:cornerRadius="12dp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnRestoreSnapshot"
+                    style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_marginStart="6dp" android:layout_weight="1"
+                    android:minHeight="44dp" android:text="@string/snapshot_restore" android:textSize="11sp" app:cornerRadius="12dp" />
+            </LinearLayout>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnTweakDiagnostics"
+                style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="4dp" android:minHeight="44dp"
+                android:text="@string/tweak_diagnostics" android:textSize="11sp" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tweaksFooter"
             android:layout_width="match_parent"

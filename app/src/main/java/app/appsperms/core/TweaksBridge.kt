@@ -117,6 +117,39 @@ object TweaksBridge {
         }
     }
 
+    /** Pulihkan snapshot persis; null berarti hapus override dan kembali ke bawaan Android. */
+    fun restoreTuning(size: Pair<Int, Int>?, density: Int?, animation: Float?, onDone: (String?) -> Unit) {
+        val sizeCmd = size?.let { "wm size ${it.first}x${it.second}" } ?: "wm size reset"
+        val densityCmd = density?.let { "wm density $it" } ?: "wm density reset"
+        val animCmd = animation?.let { v -> animKeys.joinToString(" && ") { "settings put global $it $v" } }
+        applyWithCallback(listOfNotNull(sizeCmd, densityCmd, animCmd).joinToString(" && "), onDone)
+    }
+
+    // ------------------------------------------------------ app terlindungi
+
+    fun protectApp(packageName: String, onDone: (String?) -> Unit) {
+        val pkg = shellQuote(packageName)
+        applyWithCallback(
+            "appops set $pkg RUN_IN_BACKGROUND allow; " +
+                "appops set $pkg RUN_ANY_IN_BACKGROUND allow; " +
+                "am set-inactive $pkg false; cmd deviceidle whitelist +$pkg >/dev/null 2>&1 || true",
+            onDone,
+        )
+    }
+
+    fun unprotectApp(packageName: String, onDone: (String?) -> Unit) {
+        val pkg = shellQuote(packageName)
+        applyWithCallback(
+            "appops set $pkg RUN_IN_BACKGROUND default; " +
+                "appops set $pkg RUN_ANY_IN_BACKGROUND default; " +
+                "cmd deviceidle whitelist -$pkg >/dev/null 2>&1 || true",
+            onDone,
+        )
+    }
+
+    /** Hanya menerima package hasil PackageManager; quote tetap dipakai sebagai lapisan kedua. */
+    private fun shellQuote(value: String): String = "'" + value.replace("'", "'\"'\"'") + "'"
+
     // ------------------------------------------------- izin overlay utk diri
 
     /**

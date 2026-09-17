@@ -361,4 +361,32 @@
     <string name="about_website">Website</string>
     <string name="about_source">Source code</string>
     <string name="about_credit">Built with care in XyVerse · @xykalnotkel</string>
+    <string name="safe_tuning_title">Safe protection &amp; profiles</string>
+    <string name="protected_app_none">No protected application</string>
+    <string name="protected_app_value">Protected: %1$s</string>
+    <string name="protected_app_note">Helps an app stay active in the background and exempts it from Doze. Android/the ROM may still stop it after force-stop or swipe.</string>
+    <string name="protected_app_pick">Choose app</string>
+    <string name="protected_app_clear">Remove</string>
+    <string name="protected_app_done">Background protection applied to %1$s ✓</string>
+    <string name="protected_app_removed">Background protection removed ✓</string>
+    <string name="profiles_title">Manual profiles</string>
+    <string name="profiles_note">Never applied automatically. Gaming uses 0.5× animations; Battery uses stable 1×.</string>
+    <string name="profile_gaming">Gaming 0.5×</string>
+    <string name="profile_battery">Battery 1×</string>
+    <string name="profile_confirm">Apply the %1$s profile? Nothing changes until you press Apply.</string>
+    <string name="snapshot_save">Save state</string>
+    <string name="snapshot_restore">Restore</string>
+    <string name="snapshot_saved">Display and animation state saved ✓</string>
+    <string name="snapshot_empty">No saved state yet.</string>
+    <string name="snapshot_restored">Previous state restored ✓</string>
+    <string name="tweak_diagnostics">View tweak diagnostics</string>
+    <string name="tweak_diag_title">Tuning diagnostics</string>
+    <string name="tweak_diag_body">Display: %1$s
+Animations: %2$s
+Protected app: %3$s
+
+Touch-consuming feature: DISABLED
+Process cleaner: DISABLED
+Automatic tweaks: NONE</string>
+    <string name="snapshot_restore_confirm">Restore resolution, DPI, and animations exactly to the last saved state?</string>
 </resources>

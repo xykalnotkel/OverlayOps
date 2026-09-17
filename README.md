@@ -27,10 +27,10 @@ Kunjungi landing page lengkap OverlayOps:
 
 ## ⬇️ Download
 
-| **Varian v1.4.1** (v1.4.0 tetap tersedia di arsip rilis) | Link Unduh | Ukuran | SHA-256 | Catatan |
+| **Varian v1.4.2** (v1.4.0 tetap tersedia di arsip rilis) | Link Unduh | Ukuran | SHA-256 | Catatan |
 |---|---|---|---|---|
-| **Release APK (Disarankan)** | **[AppsPerms-1.4.1-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.1/AppsPerms-1.4.1-release.apk)** | 1,98 MB | *live* → `docs/data/virustotal.json` | Signed keystore resmi, R8 minified |
-| Debug APK (Troubleshooting) | [AppsPerms-1.4.1-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.1/AppsPerms-1.4.1-debug.apk) | 5,99 MB | *live* → `docs/data/virustotal.json` | Logging logcat aktif, unstripped |
+| **Release APK (Disarankan)** | **[AppsPerms-1.4.1-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.2/AppsPerms-1.4.2-release.apk)** | 1,98 MB | *live* → `docs/data/virustotal.json` | Signed keystore resmi, R8 minified |
+| Debug APK (Troubleshooting) | [AppsPerms-1.4.1-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.2/AppsPerms-1.4.2-debug.apk) | 5,99 MB | *live* → `docs/data/virustotal.json` | Logging logcat aktif, unstripped |
 | Arsip v1.3.0 | [GitHub Releases](https://github.com/xykalnotkel/OverlayOps/releases) | 1,87 MB | `f0439e13…38cac` | SHA-256 lengkap di halaman rilis |
 | Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | — | Build + unit test + **scan VirusTotal otomatis** |
 

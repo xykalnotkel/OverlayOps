@@ -29,6 +29,8 @@ object Settings {
     private const val KEY_GUARD_SIDES = "guard_sides"
     private const val KEY_GUARD_THICKNESS = "guard_thickness"
     private const val KEY_GUARD_TEST = "guard_test"
+    private const val KEY_PROTECTED_APP = "protected_app"
+    private const val KEY_TUNING_SNAPSHOT = "tuning_snapshot"
 
     private fun prefs(context: Context) =
         context.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
@@ -84,6 +86,21 @@ object Settings {
 
     fun setDefaultSort(context: Context, mode: SortMode) {
         prefs(context).edit().putString(KEY_SORT, mode.name).apply()
+    }
+
+    // -------------------------------------------------------- tuning aman
+
+    fun protectedApp(context: Context): String? =
+        prefs(context).getString(KEY_PROTECTED_APP, null)?.takeIf { it.isNotBlank() }
+
+    fun setProtectedApp(context: Context, packageName: String?) {
+        prefs(context).edit().putString(KEY_PROTECTED_APP, packageName.orEmpty()).apply()
+    }
+
+    /** Snapshot kecil: size|density|anim. String kosong berarti nilai bawaan sistem. */
+    fun tuningSnapshot(context: Context): String? = prefs(context).getString(KEY_TUNING_SNAPSHOT, null)
+    fun setTuningSnapshot(context: Context, value: String?) {
+        prefs(context).edit().putString(KEY_TUNING_SNAPSHOT, value).apply()
     }
 
     // -------------------------------------------------------- anti ghost touch

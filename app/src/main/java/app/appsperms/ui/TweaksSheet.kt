@@ -125,6 +125,96 @@ object TweaksSheet {
                 }
             }
 
+        // ----------------------------------------------- proteksi & profil aman
+        fun refreshProtected() {
+            val pkg = AppPrefs.protectedApp(activity)
+            val label = pkg?.let { runCatching {
+                activity.packageManager.getApplicationLabel(activity.packageManager.getApplicationInfo(it, 0)).toString()
+            }.getOrNull() }
+            b.protectedAppStatus.text = if (pkg == null) activity.getString(R.string.protected_app_none)
+                else activity.getString(R.string.protected_app_value, label ?: pkg)
+            b.btnClearProtected.isEnabled = pkg != null
+        }
+        refreshProtected()
+
+        b.btnPickProtected.setOnClickListener {
+            if (!canOperate) return@setOnClickListener onNotify(activity.getString(R.string.tweaks_need_shizuku))
+            val pm = activity.packageManager
+            val apps = pm.getInstalledApplications(0)
+                .filter { pm.getLaunchIntentForPackage(it.packageName) != null && it.packageName != BuildConfig.APPLICATION_ID }
+                .map { pm.getApplicationLabel(it).toString() to it.packageName }
+                .sortedBy { it.first.lowercase() }
+            MaterialAlertDialogBuilder(activity).setTitle(R.string.protected_app_pick)
+                .setItems(apps.map { "${it.first}\n${it.second}" }.toTypedArray()) { _, which ->
+                    val (label, pkg) = apps[which]
+                    TweaksBridge.protectApp(pkg) { err ->
+                        if (err == null) AppPrefs.setProtectedApp(activity, pkg)
+                        refreshProtected()
+                        onNotify(if (err == null) activity.getString(R.string.protected_app_done, label)
+                            else activity.getString(R.string.tweaks_apply_fail, err))
+                    }
+                }.setNegativeButton(R.string.dialog_cancel, null).show()
+        }
+        b.btnClearProtected.setOnClickListener {
+            val pkg = AppPrefs.protectedApp(activity) ?: return@setOnClickListener
+            TweaksBridge.unprotectApp(pkg) { err ->
+                if (err == null) AppPrefs.setProtectedApp(activity, null)
+                refreshProtected()
+                onNotify(if (err == null) activity.getString(R.string.protected_app_removed)
+                    else activity.getString(R.string.tweaks_apply_fail, err))
+            }
+        }
+
+        fun confirmProfile(name: String, scale: Float) {
+            MaterialAlertDialogBuilder(activity)
+                .setTitle(R.string.profiles_title)
+                .setMessage(activity.getString(R.string.profile_confirm, name))
+                .setPositiveButton(R.string.dialog_apply) { _, _ ->
+                    TweaksBridge.setAnimScales(scale) { err ->
+                        onNotify(if (err == null) activity.getString(R.string.tweaks_anim_set, formatScale(scale))
+                            else activity.getString(R.string.tweaks_apply_fail, err))
+                    }
+                }.setNegativeButton(R.string.dialog_cancel, null).show()
+        }
+        b.btnProfileGaming.setOnClickListener { confirmProfile(b.btnProfileGaming.text.toString(), 0.5f) }
+        b.btnProfileBattery.setOnClickListener { confirmProfile(b.btnProfileBattery.text.toString(), 1f) }
+
+        b.btnSnapshot.setOnClickListener {
+            TweaksBridge.readDisplay { info, err ->
+                if (err != null) return@readDisplay onNotify(activity.getString(R.string.tweaks_apply_fail, err))
+                TweaksBridge.readAnimScales { anim ->
+                    val size = if (info.isSizeOverridden) "${info.overrideW}x${info.overrideH}" else ""
+                    val density = info.overrideDensity?.toString().orEmpty()
+                    AppPrefs.setTuningSnapshot(activity, "$size|$density|${anim ?: 1f}")
+                    onNotify(activity.getString(R.string.snapshot_saved))
+                }
+            }
+        }
+        b.btnRestoreSnapshot.setOnClickListener {
+            val parts = AppPrefs.tuningSnapshot(activity)?.split('|')
+            if (parts == null || parts.size != 3) return@setOnClickListener onNotify(activity.getString(R.string.snapshot_empty))
+            val size = parts[0].takeIf { it.isNotBlank() }?.let(WmParser::parseSize)
+            val density = parts[1].toIntOrNull()
+            val anim = parts[2].toFloatOrNull()
+            MaterialAlertDialogBuilder(activity).setTitle(R.string.snapshot_restore)
+                .setMessage(R.string.snapshot_restore_confirm)
+                .setPositiveButton(R.string.dialog_apply) { _, _ ->
+                    TweaksBridge.restoreTuning(size, density, anim) { err ->
+                        onNotify(if (err == null) activity.getString(R.string.snapshot_restored)
+                            else activity.getString(R.string.tweaks_apply_fail, err))
+                    }
+                }.setNegativeButton(R.string.dialog_cancel, null).show()
+        }
+        b.btnTweakDiagnostics.setOnClickListener {
+            TweaksBridge.readDisplay { info, _ -> TweaksBridge.readAnimScales { anim ->
+                val pkg = AppPrefs.protectedApp(activity) ?: "—"
+                MaterialAlertDialogBuilder(activity).setTitle(R.string.tweak_diag_title)
+                    .setMessage(activity.getString(R.string.tweak_diag_body, formatDisplay(activity, info),
+                        anim?.let(::formatScale) ?: "?", pkg))
+                    .setPositiveButton(R.string.dialog_close, null).show()
+            } }
+        }
+
         // ---------------------------------------------------------- "booster"
         b.btnKillBg.setOnClickListener {
             if (!canOperate) {
