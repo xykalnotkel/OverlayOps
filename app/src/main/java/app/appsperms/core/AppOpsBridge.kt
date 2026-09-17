@@ -57,32 +57,33 @@ object AppOpsBridge {
             val raw: IBinder = SystemServiceHelper.getSystemService("appops")
             val wrapped = ShizukuBinderWrapper(raw)
 
-            val stub = Class.forName("android.app.AppOpsManager\$IAppOpsService\$Stub")
-            val asInterface = stub.getMethod("asInterface", IBinder::class.java)
-            val svc = asInterface.invoke(null, wrapped) ?: error("asInterface() mengembalikan null")
+            // v1.4.1 fix: kelas AIDL yang benar ada di com.android.internal.app —
+            // nama "android.app.AppOpsManager$IAppOpsService" tidak pernah ada di
+            // AOSP, jadi binder selalu ClassNotFoundException dan app jatuh ke
+            // "Mode shell". Sekarang coba kandidat + toleran arg ekstra versi ROM.
+            var svc: Any? = null
+            var iface: Class<*>? = null
+            for (stubName in STUB_CANDIDATES) {
+                val cand = runCatching {
+                    val stub = Class.forName(stubName)
+                    stub.getMethod("asInterface", IBinder::class.java).invoke(null, wrapped)
+                }.getOrNull()
+                if (cand != null) {
+                    svc = cand
+                    iface = runCatching { Class.forName(stubName.removeSuffix("\$Stub")) }
+                        .getOrNull()
+                        ?: cand.javaClass.interfaces.firstOrNull()
+                    break
+                }
+            }
+            val ifc = iface ?: error("IAppOpsService tidak ditemukan di ROM ini")
 
-            val iface = Class.forName("android.app.AppOpsManager\$IAppOpsService")
-            checkOperationMethod = iface.getMethod(
-                "checkOperation",
-                Int::class.java,
-                Int::class.java,
-                String::class.java,
-            )
-            setModeMethod = iface.getMethod(
-                "setMode",
-                Int::class.java,
-                Int::class.java,
-                String::class.java,
-                Int::class.java,
-            )
-            noteOperationMethod = runCatching {
-                iface.getMethod(
-                    "noteOperation",
-                    Int::class.java,
-                    Int::class.java,
-                    String::class.java,
-                )
-            }.getOrNull()
+            checkOperationMethod = findMethod(ifc, "checkOperation", Int::class.java, Int::class.java, String::class.java)
+                ?: findMethod(ifc, "checkOperationRaw", Int::class.java, Int::class.java, String::class.java)
+                ?: error("checkOperation() tidak tersedia di Android ini")
+            setModeMethod = findMethod(ifc, "setMode", Int::class.java, Int::class.java, String::class.java, Int::class.java)
+                ?: error("setMode() tidak tersedia di Android ini")
+            noteOperationMethod = findMethod(ifc, "noteOperation", Int::class.java, Int::class.java, String::class.java)
 
             strOpToOpMethod = resolveStatic(AppOpsManager::class.java, "strOpToOp", String::class.java)
             opToNameMethod = resolveStatic(AppOpsManager::class.java, "opToName", Int::class.java)
@@ -111,6 +112,39 @@ object AppOpsBridge {
         return runCatching {
             owner.getDeclaredMethod(name, *params).apply { isAccessible = true }
         }.getOrNull()
+    }
+
+    private val STUB_CANDIDATES = listOf(
+        "com.android.internal.app.IAppOpsService\$Stub",
+        "android.app.IAppOpsService\$Stub",
+        "android.app.AppOpsManager\$IAppOpsService\$Stub",
+    )
+
+    /** Method AIDL dengan argumen awal pas, toleran terhadap param ekstra (variasi ROM). */
+    private fun findMethod(owner: Class<*>, name: String, vararg leading: Class<*>): Method? {
+        val declared = runCatching { owner.declaredMethods.toList() }.getOrDefault(emptyList())
+        return (owner.methods.toList() + declared)
+            .filter { m ->
+                m.name == name && m.parameterTypes.size >= leading.size &&
+                    (0 until leading.size).all { m.parameterTypes[it] == leading[it] }
+            }
+            .minByOrNull { it.parameterTypes.size }
+    }
+
+    /** Invoke sambil mengisi param ekstra (kalau ROM menambah arg) dengan default aman. */
+    private fun invokeAdapted(m: Method, target: Any, vararg base: Any?): Any? {
+        val need = m.parameterTypes.size
+        if (base.size == need) return m.invoke(target, *base)
+        val args = arrayOfNulls<Any>(need)
+        base.forEachIndexed { i, v -> if (i < need) args[i] = v }
+        for (i in base.size until need) {
+            args[i] = when (m.parameterTypes[i]) {
+                java.lang.Boolean.TYPE -> false
+                java.lang.Integer.TYPE -> 0
+                else -> null
+            }
+        }
+        return m.invoke(target, *args)
     }
 
     /** "android:system_alert_window" -> 24. Null kalau tidak bisa dipetakan. */
@@ -149,7 +183,7 @@ object AppOpsBridge {
         val code = opCode(op) ?: return OpStatus.UNKNOWN
         val method = checkOperationMethod ?: return OpStatus.UNKNOWN
         return try {
-            val mode = method.invoke(service, code, uid, pkg) as Int
+            val mode = invokeAdapted(method, service!!, code, uid, pkg) as Int
             OpStatus.fromMode(mode)
         } catch (t: Throwable) {
             Log.w(TAG, "checkOperation gagal untuk $pkg/$op", t)
@@ -166,7 +200,7 @@ object AppOpsBridge {
         val code = opCode(op) ?: return "Kode AppOp tidak dikenali: $op"
         val method = setModeMethod ?: return "setMode() tidak tersedia di Android ini"
         return try {
-            method.invoke(service, code, uid, pkg, mode)
+            invokeAdapted(method, service!!, code, uid, pkg, mode)
             null
         } catch (t: Throwable) {
             val cause = (t.cause ?: t)
