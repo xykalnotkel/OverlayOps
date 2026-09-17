@@ -189,35 +189,31 @@ jobs:
           if [ -z "${VT_API_KEY:-}" ]; then
             echo "::warning::Secret VT_API_KEY belum diset — scan VirusTotal dilewati; hash & ukuran tetap diperbarui."
           else
-            H="X-Api-Key: $VT_API_KEY"
-            J=$(curl -s -H "$H" "$V3/files/$REL_SHA" || true)
+            # Header v3 yang benar: X-Apikey (tanpa strip); -L wajib (www->api redirect)
+            H="X-Apikey: $VT_API_KEY"
+            J=$(curl -sL -H "$H" "$V3/files/$REL_SHA" || true)
             AID=""
             if jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
               echo "file sudah dikenal VirusTotal (hash sama) — pakai hasil terakhir"
             else
-              RESP=$(curl -s -H "$H" "$V3/files/$REL_SHA/upload-url" || true)
-              UPID=$(jq -r '.data.id // empty' <<<"$RESP")
-              UPURL=$(jq -r '.data.upload_url // empty' <<<"$RESP")
-              if [ -n "$UPURL" ]; then
-                curl -s -H "$H" -T "$REL_APK" "$UPURL" >/dev/null
-                POST=$(curl -s -H "$H" -H 'Content-Type: application/json' -X POST "$V3/files/upload" -d "{\"data\":{\"id\":\"$UPID\"}}")
-                AID=$(jq -r '.data.links.self // empty' <<<"$POST"); AID=${AID##*/}
-              else
-                echo "upload-url kosong (mungkin antrian penuh) — coba lagi di rilis berikutnya"; AID=""
-              fi
+              POST=$(curl -sL -H "$H" -F file=@$REL_APK "$V3/files" || true)
+              AID=$(jq -r '.data.id // empty' <<<"$POST")
+              [ -n "$AID" ] || echo "::warning::submit VT gagal: $(jq -r '.error.message // "?"' <<<"$POST") — pakai hasil terakhir yang ada bila ada"
             fi
             if [ -n "$AID" ]; then
               for i in $(seq 1 20); do
-                ST=$(curl -s -H "$H" "$V3/analyses/$AID" | jq -r '.data.attributes.status // "?"')
-                echo "analisis $AID: $ST ($i/20)"
+                ST=$(curl -sL -H "$H" "$V3/analyses/$AID" | jq -r '.data.attributes.status // "?"')
+                echo "analisis: $ST ($i/20)"
                 [ "$ST" = "completed" ] && break
                 sleep 15
               done
+              J=$(curl -sL -H "$H" "$V3/files/$REL_SHA" || true)
             fi
-            J=$(curl -s -H "$H" "$V3/files/$REL_SHA" || true)
             if jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
+              # DET = malicious+suspicious; TOT = hanya engine yang benar-benar memutus
+              # (timeout/failure/type-unsupported tidak dihitung supaya angka jujur)
               DET=$(jq -r '[(.data.attributes.last_analysis_stats.malicious // 0), (.data.attributes.last_analysis_stats.suspicious // 0)] | add' <<<"$J")
-              TOT=$(jq -r '.data.attributes.last_analysis_stats | to_entries | map(.value) | add // 0' <<<"$J")
+              TOT=$(jq -r '[.data.attributes.last_analysis_stats | (.malicious // 0) + (.suspicious // 0) + (.undetected // 0) + (.harmless // 0)] | add' <<<"$J")
               CHECKED=true
             fi
           fi
@@ -240,7 +236,6 @@ jobs:
           #    screenshot CLEAN yang ada tidak tertimpa kartu "belum tersedia"
           if [ "$CHECKED" = "true" ]; then
             if python3 -c "import PIL" 2>/dev/null || pip install --quiet pillow; then
-              python3 -m pip install --quiet pillow
               python3 docs/tools/make-vt-card.py --data docs/data/virustotal.json --out docs/images/virustotal-report.png \
                 && cp docs/images/virustotal-report.png out/virustotal-report.png
             fi
