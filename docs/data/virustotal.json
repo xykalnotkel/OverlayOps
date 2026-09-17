@@ -1,22 +1,22 @@
 {
-  "updated_utc": "2026-09-17T16:27:16Z",
+  "updated_utc": "2026-09-17T17:20:52Z",
   "version": "1.4.0",
   "generated_by": "GitHub Actions build.yml (otomatis tiap tag v*)",
   "release": {
     "file": "AppsPerms-1.4.0-release.apk",
-    "sha256": "074d9c0ea2a47f6de34fc4cb11564e04d3843d707fdf25a8a00eb8f65f6e376c",
+    "sha256": "61fcd296bc96dd915d354f632f694e66eda8b090225c503dddd8ccac49829f92",
     "size_mb": 1.98
   },
   "debug": {
     "file": "AppsPerms-1.4.0-debug.apk",
-    "sha256": "d4f7a63b201474bc92bc1358f189eb97ae7a91af776df52f9a7efdd96899ffbd",
+    "sha256": "e032e7c368177a4b5b386dd2ca1e742c51b775505e6082bba74ebdaede943406",
     "size_mb": 5.99
   },
   "virustotal": {
     "checked": false,
     "detected": 0,
     "total": 0,
-    "permalink": "https://www.virustotal.com/gui/file/074d9c0ea2a47f6de34fc4cb11564e04d3843d707fdf25a8a00eb8f65f6e376c",
-    "checked_utc": "2026-09-17T16:27:16Z"
+    "permalink": "https://www.virustotal.com/gui/file/61fcd296bc96dd915d354f632f694e66eda8b090225c503dddd8ccac49829f92",
+    "checked_utc": "2026-09-17T17:20:52Z"
   }
 }
