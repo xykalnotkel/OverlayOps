@@ -207,11 +207,20 @@ jobs:
                 [ "$ST" = "completed" ] && break
                 sleep 15
               done
-              J=$(curl -sL -H "$H" "$V3/files/$REL_SHA" || true)
+              # Angka dibaca dari respons /analyses (instan). Metadata /files/{sha}
+              # baru disinkronkan VT beberapa menit pasca-scan -> 0/0 kalau dibaca
+              # buru-buru (penyebab catatan rilis v1.4.1 pertama jadi "0 / 0").
+              AN=$(curl -sL -H "$H" "$V3/analyses/$AID" || true)
+              DET=$(jq -r '[(.data.attributes.stats.malicious // 0), (.data.attributes.stats.suspicious // 0)] | add' <<<"$AN")
+              TOT=$(jq -r '[.data.attributes.stats | (.malicious // 0) + (.suspicious // 0) + (.undetected // 0) + (.harmless // 0)] | add' <<<"$AN")
+              if [ "${TOT:-0}" -gt 0 ]; then
+                CHECKED=true
+              else
+                J=$(curl -sL -H "$H" "$V3/files/$REL_SHA" || true)
+              fi
             fi
-            if jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
-              # DET = malicious+suspicious; TOT = hanya engine yang benar-benar memutus
-              # (timeout/failure/type-unsupported tidak dihitung supaya angka jujur)
+            if [ "$CHECKED" != "true" ] && jq -e '.data.attributes.last_analysis_stats' >/dev/null 2>&1 <<<"$J"; then
+              # fallback: file yang sudah dikenal VirusTotal (jalur tanpa upload)
               DET=$(jq -r '[(.data.attributes.last_analysis_stats.malicious // 0), (.data.attributes.last_analysis_stats.suspicious // 0)] | add' <<<"$J")
               TOT=$(jq -r '[.data.attributes.last_analysis_stats | (.malicious // 0) + (.suspicious // 0) + (.undetected // 0) + (.harmless // 0)] | add' <<<"$J")
               CHECKED=true
