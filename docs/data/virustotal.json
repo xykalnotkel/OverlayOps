@@ -1,23 +1,22 @@
 {
-  "updated_utc": "2026-09-16T00:00:00Z",
-  "version": "1.3.0",
-  "note": "Baseline manual dari klaim README v1.3.0. Sejak v1.4.0 file ini DITIMPA OTOMATIS oleh GitHub Actions setiap push tag v*: build release → scan VirusTotal (secret VT_API_KEY) → update JSON + kartu PNG + catatan rilis. Tanpa VT_API_KEY, hash & ukuran tetap diperbarui, blok virustotal diberi checked:false.",
+  "updated_utc": "2026-09-17T16:27:16Z",
+  "version": "1.4.0",
+  "generated_by": "GitHub Actions build.yml (otomatis tiap tag v*)",
   "release": {
-    "file": "AppsPerms-1.3.0-release.apk",
-    "sha256": "f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac",
-    "bytes": 1956096,
-    "size_mb": 1.87
+    "file": "AppsPerms-1.4.0-release.apk",
+    "sha256": "074d9c0ea2a47f6de34fc4cb11564e04d3843d707fdf25a8a00eb8f65f6e376c",
+    "size_mb": 1.98
   },
   "debug": {
-    "file": "AppsPerms-1.3.0-debug.apk",
-    "sha256": "35d3cf584e640b5d2e92b1040c4bf00dc07e39d072aac67cdb016c102d1d1d74",
-    "size_mb": 5.86
+    "file": "AppsPerms-1.4.0-debug.apk",
+    "sha256": "d4f7a63b201474bc92bc1358f189eb97ae7a91af776df52f9a7efdd96899ffbd",
+    "size_mb": 5.99
   },
   "virustotal": {
-    "checked": true,
+    "checked": false,
     "detected": 0,
-    "total": 72,
-    "permalink": "https://www.virustotal.com/gui/file/f0439e1373567f3d17c2f88a0eff02ff3321906140c84fb9eb624c30d0138cac",
-    "checked_utc": "2026-09-16T00:00:00Z"
+    "total": 0,
+    "permalink": "https://www.virustotal.com/gui/file/074d9c0ea2a47f6de34fc4cb11564e04d3843d707fdf25a8a00eb8f65f6e376c",
+    "checked_utc": "2026-09-17T16:27:16Z"
   }
 }
