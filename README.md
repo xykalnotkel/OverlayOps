@@ -29,8 +29,8 @@ Kunjungi landing page lengkap OverlayOps:
 
 | Varian | Link Unduh | Ukuran | SHA-256 | Catatan |
 |---|---|---|---|---|
-| **Release APK (Disarankan)** | **[AppsPerms-1.4.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-release.apk)** | ~1,9 MB | *live* → `docs/data/virustotal.json` | Signed keystore resmi, R8 minified |
-| Debug APK (Troubleshooting) | [AppsPerms-1.4.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-debug.apk) | ~5,9 MB | *live* → `docs/data/virustotal.json` | Logging logcat aktif, unstripped |
+| **Release APK (Disarankan)** | **[AppsPerms-1.4.0-release.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-release.apk)** | 1,98 MB | *live* → `docs/data/virustotal.json` | Signed keystore resmi, R8 minified |
+| Debug APK (Troubleshooting) | [AppsPerms-1.4.0-debug.apk](https://github.com/xykalnotkel/OverlayOps/releases/download/v1.4.0/AppsPerms-1.4.0-debug.apk) | 5,99 MB | *live* → `docs/data/virustotal.json` | Logging logcat aktif, unstripped |
 | Arsip v1.3.0 | [GitHub Releases](https://github.com/xykalnotkel/OverlayOps/releases) | 1,87 MB | `f0439e13…38cac` | SHA-256 lengkap di halaman rilis |
 | Build Log CI | [GitHub Actions](https://github.com/xykalnotkel/OverlayOps/actions) | — | — | Build + unit test + **scan VirusTotal otomatis** |
 
@@ -118,6 +118,10 @@ semuanya lewat shell Shizuku (tanpa root):
 8. **🌐 Website: alur unduh & audit live** — tombol APK kini memicu **unduhan native browser** (tanpa redirect
    iframe; halaman Terima Kasih terbuka di tab baru, **tanpa tombol download lagi**). Hash, ukuran & skor
    VirusTotal di index.html/thanks.html dibaca dari **`docs/data/virustotal.json`** yang ditulis ulang CI tiap rilis.
+   Situs di-serve **Cloudflare Pages** (`appsperms.haekal.web.id` → project `appsperms`) dan otomatis
+   di-deploy ulang oleh step terakhir CI tiap ada perubahan `docs/` — GitHub Pages sudah dimatikan.
+   Alur unduh: klik tombol → APK di-download di tab baru (native, tidak bisa gagal karena navigasi halaman)
+   → tab utama pindah ke `thanks.html` setelah 600 ms.
 
 ### 🔬 Prosedur rilis (VirusTotal otomatis per tag)
 

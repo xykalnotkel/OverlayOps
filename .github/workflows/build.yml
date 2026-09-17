@@ -240,6 +240,7 @@ jobs:
           #    screenshot CLEAN yang ada tidak tertimpa kartu "belum tersedia"
           if [ "$CHECKED" = "true" ]; then
             if python3 -c "import PIL" 2>/dev/null || pip install --quiet pillow; then
+              python3 -m pip install --quiet pillow
               python3 docs/tools/make-vt-card.py --data docs/data/virustotal.json --out docs/images/virustotal-report.png \
                 && cp docs/images/virustotal-report.png out/virustotal-report.png
             fi
@@ -291,3 +292,21 @@ jobs:
           body_path: out/release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publikasikan situs ke Cloudflare Pages
+        if: always() && !cancelled()
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: appsperms
+        run: |
+          # Situs kini di-serve Cloudflare Pages (appsperms.haekal.web.id).
+          # Deploy tiap run supaya data/hash/kartu hasil step di atas langsung
+          # tayang — juga saat commit-balik docs ke main.
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::notice::Secret CLOUDFLARE_API_TOKEN/ACCOUNT_ID belum diset — lewati publish Pages."
+            exit 0
+          fi
+          npx --yes wrangler@3 pages deploy docs \
+            --project-name="$CLOUDFLARE_PAGES_PROJECT" --branch=main --commit-dirty=true
