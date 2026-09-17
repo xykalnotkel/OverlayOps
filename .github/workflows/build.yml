@@ -222,7 +222,9 @@ jobs:
             fi
           fi
 
-          # 1) data live untuk website (index.html & thanks.html membaca file ini)
+          # 1) data live untuk website (index.html & thanks.html membaca file ini).
+          #    SELALU ditulis — hash & ukuran akurat walau scan VT dilewati
+          #    (blok virustotal membawa checked:false, situs menampilkan fallback).
           jq -n --arg v "$VERSION" --arg now "$NOW" \
              --arg rfile "AppsPerms-$VERSION-release.apk" --arg dfile "AppsPerms-$VERSION-debug.apk" \
              --arg rsha "$REL_SHA" --arg dsha "$DBG_SHA" --argjson rmb "$REL_MB" --argjson dmb "$DBG_MB" \
@@ -234,10 +236,13 @@ jobs:
              > docs/data/virustotal.json
           cp docs/data/virustotal.json out/virustotal.json
 
-          # 2) kartu hasil scan (PNG) — pengganti screenshot manual yang selalu ketinggalan
-          if python3 -c "import PIL" 2>/dev/null || pip install --quiet pillow; then
-            python3 docs/tools/make-vt-card.py --data docs/data/virustotal.json --out docs/images/virustotal-report.png \
-              && cp docs/images/virustotal-report.png out/virustotal-report.png
+          # 2) kartu hasil scan (PNG) — hanya saat scan benar-benar jalan, supaya
+          #    screenshot CLEAN yang ada tidak tertimpa kartu "belum tersedia"
+          if [ "$CHECKED" = "true" ]; then
+            if python3 -c "import PIL" 2>/dev/null || pip install --quiet pillow; then
+              python3 docs/tools/make-vt-card.py --data docs/data/virustotal.json --out docs/images/virustotal-report.png \
+                && cp docs/images/virustotal-report.png out/virustotal-report.png
+            fi
           fi
 
           # 3) laporan ke catatan rilis
@@ -253,9 +258,11 @@ jobs:
             echo "- SHA-256 release APK: \`$REL_SHA\`"
           } >> out/release-notes.md
 
-          # 4) push balik data + kartu ke main (perubahan docs/ TIDAK memicu build APK — lihat paths-ignore)
-          if [ "$CHECKED" = "true" ]; then
-            git add docs/data/virustotal.json docs/images/virustotal-report.png
+          # 4) push balik data (+kartu jika ada) ke main
+          #    (perubahan docs/ TIDAK memicu build APK — lihat paths-ignore)
+          if true; then
+            git add docs/data/virustotal.json
+            [ -f out/virustotal-report.png ] && git add docs/images/virustotal-report.png
             if ! git diff --cached --quiet; then
               git -c user.name="AppsPerms CI" -c user.email="appsperms-ci@xykalnotkel.local" \
                   commit -q -m "docs: hasil scan VirusTotal & hash v$VERSION (otomatis CI)"
